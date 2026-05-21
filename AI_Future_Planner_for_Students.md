@@ -274,7 +274,7 @@ Instead of:
 
 The app frames it as:
 
-> "This is part of becoming a future engineer."
+> "This is part of becoming a future something."
 
 ---
 
