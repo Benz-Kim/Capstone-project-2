@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Future Planner — Dashboard</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+<style>
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f3f4f6;
+    --bg-tertiary: #f7f6f2;
+    --text-primary: #111111;
+    --text-secondary: #6b7280;
+    --text-tertiary: #9ca3af;
+    --border-subtle: rgba(0,0,0,0.1);
+    --border-mid: rgba(0,0,0,0.18);
+    --radius-md: 8px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-primary: #1c1c1e;
+      --bg-secondary: #2c2c2e;
+      --bg-tertiary: #141414;
+      --text-primary: #f5f5f7;
+      --text-secondary: #aeaeb2;
+      --text-tertiary: #636366;
+      --border-subtle: rgba(255,255,255,0.08);
+      --border-mid: rgba(255,255,255,0.15);
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font);
+    background: var(--bg-tertiary);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px 12px 40px;
+  }
+  .shell {
+    width: 100%;
+    max-width: 420px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    border: 0.5px solid var(--border-subtle);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+  }
+
+  /* ── TOP NAV ── */
+  .top-nav {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 18px;
+    background: var(--bg-primary);
+    border-bottom: 0.5px solid var(--border-subtle);
+  }
+  .avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: #FAEEDA;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600; color: #633806; flex-shrink: 0;
+  }
+  .greet { flex: 1; }
+  .greet-name { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+  .greet-date { font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
+  .nav-icons { display: flex; gap: 14px; align-items: center; }
+  .ni { font-size: 22px; color: var(--text-secondary); cursor: pointer; position: relative; }
+  .ni:hover { color: var(--text-primary); }
+  .notif-dot {
+    position: absolute; top: -1px; right: -1px;
+    width: 7px; height: 7px; background: #E24B4A;
+    border-radius: 50%; border: 1.5px solid var(--bg-primary);
+  }
+
+  /* ── SCROLL BODY ── */
+  .body { padding: 14px 14px 0; max-height: 75vh; overflow-y: auto; }
+  .body::-webkit-scrollbar { width: 4px; }
+  .body::-webkit-scrollbar-track { background: transparent; }
+  .body::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 4px; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg-primary);
+    border: 0.5px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 16px; margin-bottom: 12px;
+  }
+  .sec-label {
+    font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--text-secondary); margin-bottom: 10px;
+  }
+
+  /* ── GOAL CARD ── */
+  .goal-card { background: #185FA5; border: none; padding: 18px; }
+  .goal-chip {
+    display: inline-block; background: rgba(255,255,255,.18);
+    color: rgba(255,255,255,.85); font-size: 10px; letter-spacing: .06em;
+    text-transform: uppercase; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px;
+  }
+  .goal-title { font-size: 22px; font-weight: 600; color: #fff; line-height: 1.25; margin-bottom: 4px; }
+  .goal-sub { font-size: 13px; color: rgba(255,255,255,.7); margin-bottom: 14px; }
+  .goal-expand-btn {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 12px; color: #B5D4F4;
+    background: none; border: none; cursor: pointer; padding: 0; font-family: var(--font);
+  }
+  .goal-expand-btn i { transition: transform .25s; }
+  .goal-expand-btn.open i { transform: rotate(180deg); }
+  .goal-details { overflow: hidden; max-height: 0; transition: max-height .35s ease, margin-top .25s; }
+  .goal-details.open { max-height: 220px; margin-top: 14px; }
+  .goal-detail-inner { border-top: 1px solid rgba(255,255,255,.2); padding-top: 12px; }
+  .goal-tag {
+    display: inline-block; background: rgba(255,255,255,.15);
+    color: #fff; font-size: 11px; padding: 3px 10px;
+    border-radius: 20px; margin: 3px 3px 0 0;
+  }
+  .goal-stat-row { display: flex; gap: 16px; margin-top: 14px; }
+  .goal-stat { flex: 1; }
+  .goal-stat-val { font-size: 18px; font-weight: 600; color: #fff; }
+  .goal-stat-lbl { font-size: 11px; color: rgba(255,255,255,.65); }
+
+  /* ── STEPPING STONES ── */
+  .stones-scroll { overflow-x: auto; padding-bottom: 6px; }
+  .stones-scroll::-webkit-scrollbar { height: 3px; }
+  .stones-scroll::-webkit-scrollbar-track { background: transparent; }
+  .stones-scroll::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 4px; }
+  .stones-track { display: flex; align-items: flex-start; min-width: max-content; padding: 4px 0 2px; }
+  .stone { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 64px; }
+  .sline { width: 36px; height: 2px; margin-top: -28px; flex-shrink: 0; }
+  .sline.done { background: #1D9E75; }
+  .sline.active { background: #185FA5; }
+  .sline.future { background: var(--border-subtle); }
+  .scircle {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600; border: 2px solid; flex-shrink: 0;
+  }
+  .scircle.done { background: #1D9E75; border-color: #1D9E75; color: #fff; }
+  .scircle.active { background: #185FA5; border-color: #185FA5; color: #fff; }
+  .scircle.future { background: var(--bg-primary); border-color: var(--border-mid); color: var(--text-secondary); }
+  .slabel { font-size: 9px; color: var(--text-secondary); text-align: center; line-height: 1.35; max-width: 60px; }
+
+  /* ── MILESTONE BARS ── */
+  .ms-item { margin-bottom: 13px; }
+  .ms-item:last-child { margin-bottom: 0; }
+  .ms-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+  .ms-name { font-size: 13px; color: var(--text-primary); }
+  .ms-pct { font-size: 12px; font-weight: 600; }
+  .bar { height: 8px; background: var(--bg-secondary); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+
+  /* ── TASKS ── */
+  .tasks-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .tasks-title { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+  .add-task-btn {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 12px; color: #185FA5;
+    background: #E6F1FB; border: none;
+    padding: 5px 12px; border-radius: 20px; cursor: pointer; font-weight: 600;
+    font-family: var(--font);
+  }
+  .add-task-btn:hover { background: #B5D4F4; }
+  .task-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0; border-bottom: 0.5px solid var(--border-subtle);
+    cursor: pointer; transition: all .2s;
+  }
+  .task-row:last-of-type { border-bottom: none; }
+  .task-row.done .task-name { text-decoration: line-through; color: var(--text-tertiary); }
+  .task-row.done .task-dur { color: var(--text-tertiary); opacity: .6; }
+  .task-row.done .task-subj { opacity: .4; }
+  .check {
+    width: 24px; height: 24px; border-radius: 50%;
+    border: 1.5px solid var(--border-mid);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all .15s;
+  }
+  .check.done { background: #1D9E75; border-color: #1D9E75; }
+  .task-info { flex: 1; min-width: 0; }
+  .task-name { font-size: 14px; color: var(--text-primary); transition: color .2s; }
+  .task-dur { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+  .task-subj { font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 20px; flex-shrink: 0; }
+  .subj-math { background: #E6F1FB; color: #0C447C; }
+  .subj-cs   { background: #E1F5EE; color: #085041; }
+  .subj-sat  { background: #FAEEDA; color: #633806; }
+  .subj-sci  { background: #EEEDFE; color: #3C3489; }
+  .subj-eng  { background: #FAECE7; color: #712B13; }
+  .add-area {
+    display: none; border-top: 0.5px solid var(--border-subtle);
+    padding-top: 10px; margin-top: 4px; gap: 8px; align-items: center;
+  }
+  .add-area.open { display: flex; }
+  .add-area input {
+    flex: 1; font-size: 13px; padding: 8px 12px;
+    border: 0.5px solid var(--border-mid); border-radius: var(--radius-md);
+    background: var(--bg-secondary); color: var(--text-primary);
+    font-family: var(--font); outline: none;
+  }
+  .add-area input:focus { border-color: #185FA5; }
+  .add-area button {
+    font-size: 13px; font-weight: 600; padding: 8px 16px;
+    border-radius: var(--radius-md); border: 0.5px solid var(--border-mid);
+    background: none; cursor: pointer; color: var(--text-primary);
+    font-family: var(--font);
+  }
+  .add-area button:hover { background: var(--bg-secondary); }
+
+  /* ── VERSE ── */
+  .verse-card { background: #EEEDFE; border: none; }
+  .verse-icon { font-size: 22px; color: #534AB7; margin-bottom: 8px; }
+  .verse-text { font-size: 13px; color: #3C3489; line-height: 1.75; font-style: italic; margin-bottom: 6px; }
+  .verse-ref { font-size: 11px; font-weight: 600; color: #534AB7; }
+
+  /* ── AI CHAT BOTTOM ── */
+  .chat-bottom {
+    background: var(--bg-primary);
+    border-top: 0.5px solid var(--border-subtle);
+    padding: 10px 14px 16px;
+  }
+  .chat-preview {
+    background: #E6F1FB; border-radius: 10px 10px 10px 2px;
+    padding: 9px 12px; font-size: 13px; color: #0C447C;
+    margin-bottom: 10px; line-height: 1.55;
+  }
+  .chat-input-row { display: flex; gap: 8px; align-items: center; }
+  .chat-input-row input {
+    flex: 1; font-size: 13px; padding: 9px 14px;
+    border: 0.5px solid var(--border-mid); border-radius: 24px;
+    background: var(--bg-secondary); color: var(--text-primary);
+    font-family: var(--font); outline: none;
+  }
+  .chat-input-row input:focus { border-color: #185FA5; }
+  .chat-send {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: #185FA5; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .chat-send:hover { background: #0C447C; }
+  .chat-send i { font-size: 17px; color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- TOP NAV -->
+  <div class="top-nav">
+    <div class="avatar">HJ</div>
+    <div class="greet">
+      <div class="greet-name">Hi, Haeun 👋</div>
+      <div class="greet-date" id="today-date">Thursday, May 28 · Day 12 streak</div>
+    </div>
+    <div class="nav-icons">
+      <span class="ni" title="Notifications"><i class="ti ti-bell"></i><span class="notif-dot"></span></span>
+      <span class="ni" title="Settings"><i class="ti ti-settings"></i></span>
+      <span class="ni" title="Profile"><i class="ti ti-user-circle"></i></span>
+    </div>
+  </div>
+
+  <!-- SCROLL BODY -->
+  <div class="body">
+
+    <!-- FINAL GOAL — expandable, on the top -->
+    <div class="card goal-card">
+      <div class="goal-chip">final goal</div>
+      <div class="goal-title">Stanford University</div>
+      <div class="goal-sub">Computer Science · Class of 2028</div>
+      <button class="goal-expand-btn" id="expandBtn" onclick="toggleGoal()">
+        <i class="ti ti-chevron-down"></i>
+        <span id="expandLabel">see details</span>
+      </button>
+      <div class="goal-details" id="goalDetails">
+        <div class="goal-detail-inner">
+          <div style="font-size:11px;color:rgba(255,255,255,.65);margin-bottom:6px;">required capabilities</div>
+          <span class="goal-tag">Advanced Math</span>
+          <span class="goal-tag">Programming</span>
+          <span class="goal-tag">SAT 1550+</span>
+          <span class="goal-tag">Research Project</span>
+          <span class="goal-tag">Leadership</span>
+          <div class="goal-stat-row">
+            <div class="goal-stat"><div class="goal-stat-val">18mo</div><div class="goal-stat-lbl">remaining</div></div>
+            <div class="goal-stat"><div class="goal-stat-val">42%</div><div class="goal-stat-lbl">overall progress</div></div>
+            <div class="goal-stat"><div class="goal-stat-val">Nov '27</div><div class="goal-stat-lbl">deadline</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEPPING STONES -->
+    <div class="card">
+      <div class="sec-label">stepping stones to your goal</div>
+      <div class="stones-scroll">
+        <div class="stones-track">
+          <div class="stone">
+            <div class="scircle done"><i class="ti ti-check" style="font-size:14px;"></i></div>
+            <div class="slabel">Study system setup</div>
+          </div>
+          <div class="sline done"></div>
+          <div class="stone">
+            <div class="scircle done"><i class="ti ti-check" style="font-size:14px;"></i></div>
+            <div class="slabel">Baseline assessment</div>
+          </div>
+          <div class="sline active"></div>
+          <div class="stone">
+            <div class="scircle active">3</div>
+            <div class="slabel">AP Calculus BC</div>
+          </div>
+          <div class="sline future"></div>
+          <div class="stone">
+            <div class="scircle future">4</div>
+            <div class="slabel">Python project</div>
+          </div>
+          <div class="sline future"></div>
+          <div class="stone">
+            <div class="scircle future">5</div>
+            <div class="slabel">SAT 1550+</div>
+          </div>
+          <div class="sline future"></div>
+          <div class="stone">
+            <div class="scircle future">6</div>
+            <div class="slabel">Research portfolio</div>
+          </div>
+          <div class="sline future"></div>
+          <div class="stone">
+            <div class="scircle future" style="background:#FAEEDA;border-color:#EF9F27;color:#633806;font-size:16px;">🎓</div>
+            <div class="slabel">Stanford application</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MILESTONE BARS -->
+    <div class="card">
+      <div class="sec-label">milestone progress</div>
+      <div class="ms-item">
+        <div class="ms-row"><span class="ms-name">Mathematics</span><span class="ms-pct" style="color:#185FA5;">72%</span></div>
+        <div class="bar"><div class="bar-fill" style="width:72%;background:#185FA5;"></div></div>
+      </div>
+      <div class="ms-item">
+        <div class="ms-row"><span class="ms-name">Coding & CS</span><span class="ms-pct" style="color:#1D9E75;">45%</span></div>
+        <div class="bar"><div class="bar-fill" style="width:45%;background:#1D9E75;"></div></div>
+      </div>
+      <div class="ms-item">
+        <div class="ms-row"><span class="ms-name">SAT Preparation</span><span class="ms-pct" style="color:#EF9F27;">58%</span></div>
+        <div class="bar"><div class="bar-fill" style="width:58%;background:#EF9F27;"></div></div>
+      </div>
+      <div class="ms-item">
+        <div class="ms-row"><span class="ms-name">Portfolio / Projects</span><span class="ms-pct" style="color:#D4537E;">20%</span></div>
+        <div class="bar"><div class="bar-fill" style="width:20%;background:#D4537E;"></div></div>
+      </div>
+    </div>
+
+    <!-- TODAY'S TASKS -->
+    <div class="card">
+      <div class="tasks-header">
+        <div class="tasks-title">Today's tasks</div>
+        <button class="add-task-btn" onclick="toggleAddTask()">
+          <i class="ti ti-plus" style="font-size:13px;"></i> add task
+        </button>
+      </div>
+
+      <div id="task-list">
+        <div class="task-row done" onclick="toggleTask(this)">
+          <div class="check done"><i class="ti ti-check" style="font-size:12px;color:#fff;"></i></div>
+          <div class="task-info">
+            <div class="task-name">AP Calculus — 30 practice problems</div>
+            <div class="task-dur">2 hours · completed</div>
+          </div>
+          <span class="task-subj subj-math">Math</span>
+        </div>
+        <div class="task-row done" onclick="toggleTask(this)">
+          <div class="check done"><i class="ti ti-check" style="font-size:12px;color:#fff;"></i></div>
+          <div class="task-info">
+            <div class="task-name">Read algorithms article</div>
+            <div class="task-dur">30 min · completed</div>
+          </div>
+          <span class="task-subj subj-cs">CS</span>
+        </div>
+        <div class="task-row" onclick="toggleTask(this)">
+          <div class="check"></div>
+          <div class="task-info">
+            <div class="task-name">Python — build sorting visualizer</div>
+            <div class="task-dur">1.5 hours</div>
+          </div>
+          <span class="task-subj subj-cs">CS</span>
+        </div>
+        <div class="task-row" onclick="toggleTask(this)">
+          <div class="check"></div>
+          <div class="task-info">
+            <div class="task-name">SAT vocabulary — 20 new words</div>
+            <div class="task-dur">30 min</div>
+          </div>
+          <span class="task-subj subj-sat">SAT</span>
+        </div>
+        <div class="task-row" onclick="toggleTask(this)">
+          <div class="check"></div>
+          <div class="task-info">
+            <div class="task-name">Review AP Physics notes</div>
+            <div class="task-dur">45 min</div>
+          </div>
+          <span class="task-subj subj-sci">Science</span>
+        </div>
+      </div>
+
+      <div class="add-area" id="addArea">
+        <input type="text" id="newTaskInput" placeholder="new task name..." onkeydown="if(event.key==='Enter')addTask()" />
+        <button onclick="addTask()">add</button>
+      </div>
+
+      <div style="margin-top:10px;font-size:12px;color:var(--text-secondary);text-align:center;" id="task-summary">
+        2 of 5 tasks completed
+      </div>
+    </div>
+
+    <!-- BIBLE VERSE -->
+    <div class="card verse-card">
+      <div class="verse-icon"><i class="ti ti-book"></i></div>
+      <div class="verse-text">"For I know the plans I have for you, declares the Lord, plans to prosper you and not to harm you, plans to give you hope and a future."</div>
+      <div class="verse-ref">— Jeremiah 29:11</div>
+    </div>
+
+    <div style="height:8px;"></div>
+  </div>
+
+  <!-- AI CHAT BOX — bottom -->
+  <div class="chat-bottom">
+    <div class="chat-preview" id="chatMsg">
+      You're on track today, Haeun! 2 tasks done. Want me to adjust tonight's plan? 🎯
+    </div>
+    <div class="chat-input-row">
+      <input type="text" id="chatIn" placeholder="ask your AI coach..." onkeydown="if(event.key==='Enter')sendChat()" />
+      <button class="chat-send" onclick="sendChat()" aria-label="Send message">
+        <i class="ti ti-send"></i>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Set real date
+  const now = new Date();
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('today-date').textContent =
+    `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()} · Day 12 streak`;
+
+  // Goal expand
+  function toggleGoal() {
+    const d = document.getElementById('goalDetails');
+    const b = document.getElementById('expandBtn');
+    const lbl = document.getElementById('expandLabel');
+    d.classList.toggle('open');
+    b.classList.toggle('open');
+    lbl.textContent = d.classList.contains('open') ? 'hide details' : 'see details';
+  }
+
+  // Task toggle — done tasks go grey/lighter
+  function toggleTask(row) {
+    const check = row.querySelector('.check');
+    const name = row.querySelector('.task-name');
+    const dur = row.querySelector('.task-dur');
+    const isDone = row.classList.toggle('done');
+    check.classList.toggle('done', isDone);
+    if (isDone) {
+      check.innerHTML = '<i class="ti ti-check" style="font-size:12px;color:#fff;"></i>';
+      if (!dur.textContent.includes('completed')) dur.textContent += ' · completed';
+    } else {
+      check.innerHTML = '';
+      dur.textContent = dur.textContent.replace(' · completed', '');
+    }
+    updateSummary();
+  }
+
+  function updateSummary() {
+    const all = document.querySelectorAll('.task-row').length;
+    const done = document.querySelectorAll('.task-row.done').length;
+    document.getElementById('task-summary').textContent = `${done} of ${all} tasks completed`;
+  }
+
+  // Add task
+  function toggleAddTask() {
+    const a = document.getElementById('addArea');
+    a.classList.toggle('open');
+    if (a.classList.contains('open')) document.getElementById('newTaskInput').focus();
+  }
+
+  const subjects = ['Math','CS','SAT','Science','English'];
+  const subjectClasses = ['subj-math','subj-cs','subj-sat','subj-sci','subj-eng'];
+
+  function addTask() {
+    const input = document.getElementById('newTaskInput');
+    const val = input.value.trim();
+    if (!val) return;
+    const list = document.getElementById('task-list');
+    const idx = Math.floor(Math.random() * subjects.length);
+    const row = document.createElement('div');
+    row.className = 'task-row';
+    row.onclick = function() { toggleTask(this); };
+    row.innerHTML = `
+      <div class="check"></div>
+      <div class="task-info">
+        <div class="task-name">${val}</div>
+        <div class="task-dur">— min</div>
+      </div>
+      <span class="task-subj ${subjectClasses[idx]}">${subjects[idx]}</span>`;
+    list.appendChild(row);
+    input.value = '';
+    document.getElementById('addArea').classList.remove('open');
+    updateSummary();
+  }
+
+  // AI chat replies
+  const replies = [
+    "Sure! I'll move the vocabulary session to tomorrow and shorten Python to 45 min. Rest is part of the plan. 💙",
+    "You're 6% ahead of your math target this week — great momentum! Keep the coding session tonight.",
+    "Missing one day is fine. I'll spread those tasks over the next 3 days. Your streak is safe!",
+    "Based on your pace, you'll hit SAT 1550 by October. Keep up the vocabulary practice.",
+    "Your strongest subject right now is math. Consider starting your CS project earlier to close the gap.",
+    "Great question! Your overall progress is at 42%. You're right on schedule for a November 2027 application."
+  ];
+  let ri = 0;
+
+  function sendChat() {
+    const inp = document.getElementById('chatIn');
+    const msg = inp.value.trim();
+    if (!msg) return;
+    inp.value = '';
+    document.getElementById('chatMsg').textContent = 'thinking...';
+    setTimeout(() => {
+      document.getElementById('chatMsg').textContent = replies[ri % replies.length];
+      ri++;
+    }, 700);
+  }
+</script>
+</body>
+</html>
