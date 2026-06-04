@@ -1,526 +1,943 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AI Future Planner — Dashboard</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI Future Planner</title>
 <style>
-  :root {
-    --bg-primary: #ffffff;
-    --bg-secondary: #f3f4f6;
-    --bg-tertiary: #f7f6f2;
-    --text-primary: #111111;
-    --text-secondary: #6b7280;
-    --text-tertiary: #9ca3af;
-    --border-subtle: rgba(0,0,0,0.1);
-    --border-mid: rgba(0,0,0,0.18);
-    --radius-md: 8px;
-    --radius-lg: 14px;
-    --radius-xl: 20px;
-    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg-primary: #1c1c1e;
-      --bg-secondary: #2c2c2e;
-      --bg-tertiary: #141414;
-      --text-primary: #f5f5f7;
-      --text-secondary: #aeaeb2;
-      --text-tertiary: #636366;
-      --border-subtle: rgba(255,255,255,0.08);
-      --border-mid: rgba(255,255,255,0.15);
-    }
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: var(--font);
-    background: var(--bg-tertiary);
-    min-height: 100vh;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 24px 12px 40px;
-  }
-  .shell {
-    width: 100%;
-    max-width: 420px;
-    background: var(--bg-tertiary);
-    border-radius: var(--radius-xl);
-    overflow: hidden;
-    border: 0.5px solid var(--border-subtle);
-    box-shadow: 0 8px 40px rgba(0,0,0,0.10);
-  }
-  svg.icon { display: inline-block; vertical-align: middle; flex-shrink: 0; }
+:root {
+  --bg:#ffffff; --bg2:#f3f4f6; --bg3:#f7f6f2;
+  --t1:#111111; --t2:#6b7280; --t3:#9ca3af;
+  --b1:rgba(0,0,0,0.08); --b2:rgba(0,0,0,0.16);
+  --blue:#185FA5; --blue-l:#E6F1FB; --blue-d:#0C447C;
+  --green:#1D9E75; --amber:#EF9F27; --pink:#D4537E; --purple:#534AB7;
+  --red:#E24B4A;
+  --r:8px; --rl:14px; --rxl:20px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1c1c1e;--bg2:#2c2c2e;--bg3:#141414;
+  --t1:#f5f5f7;--t2:#aeaeb2;--t3:#636366;
+  --b1:rgba(255,255,255,0.07);--b2:rgba(255,255,255,0.14);
+  --blue-l:#1a3a5c;
+}}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--bg3);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:24px 12px 40px;}
+.shell{width:100%;max-width:420px;border-radius:var(--rxl);overflow:hidden;border:.5px solid var(--b1);box-shadow:0 8px 40px rgba(0,0,0,.10);}
+.screen{display:none;}
+.screen.active{display:block;}
 
-  /* TOP NAV */
-  .top-nav {
-    display: flex; align-items: center; gap: 10px;
-    padding: 14px 18px;
-    background: var(--bg-primary);
-    border-bottom: 0.5px solid var(--border-subtle);
-  }
-  .avatar {
-    width: 40px; height: 40px; border-radius: 50%;
-    background: #FAEEDA;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 600; color: #633806; flex-shrink: 0;
-  }
-  .greet { flex: 1; }
-  .greet-name { font-size: 15px; font-weight: 600; color: var(--text-primary); }
-  .greet-date { font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
-  .nav-icons { display: flex; gap: 14px; align-items: center; }
-  .ni { cursor: pointer; position: relative; display: flex; align-items: center; }
-  .ni svg { color: var(--text-secondary); }
-  .ni:hover svg { color: var(--text-primary); }
-  .notif-dot {
-    position: absolute; top: -1px; right: -1px;
-    width: 7px; height: 7px; background: #E24B4A;
-    border-radius: 50%; border: 1.5px solid var(--bg-primary);
-  }
+/* ── AUTH ── */
+.auth-wrap{background:var(--bg);min-height:580px;display:flex;flex-direction:column;}
+.auth-head{background:var(--blue);padding:36px 28px 28px;text-align:center;}
+.auth-logo{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:8px;}
+.auth-hl{font-size:24px;font-weight:700;color:#fff;line-height:1.25;}
+.auth-sub{font-size:13px;color:rgba(255,255,255,.7);margin-top:6px;}
+.auth-body{padding:24px 22px;flex:1;display:flex;flex-direction:column;gap:13px;}
+.fl{display:flex;flex-direction:column;gap:5px;}
+.flabel{font-size:12px;font-weight:600;color:var(--t2);letter-spacing:.03em;}
+.row2{display:flex;gap:10px;}
+.row2 .fl{flex:1;}
+.inp{width:100%;font-size:14px;padding:11px 14px;border:.5px solid var(--b2);border-radius:var(--r);background:var(--bg2);color:var(--t1);font-family:var(--font);outline:none;transition:border-color .15s;}
+.inp:focus{border-color:var(--blue);}
+.inp.err{border-color:var(--red);}
+.ferr{font-size:11px;color:var(--red);margin-top:2px;display:none;}
+.ferr.on{display:block;}
+.eyewrap{position:relative;}
+.eyewrap .inp{padding-right:40px;}
+.eyebtn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t2);}
+.btn{width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font);transition:background .15s;}
+.btn:hover{background:var(--blue-d);}
+.switch{text-align:center;font-size:13px;color:var(--t2);}
+.switch a{color:var(--blue);font-weight:600;cursor:pointer;}
+.div-line{display:flex;align-items:center;gap:10px;color:var(--t3);font-size:12px;}
+.div-line::before,.div-line::after{content:'';flex:1;height:.5px;background:var(--b1);}
+.soc{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:11px;border:.5px solid var(--b2);border-radius:var(--r);background:none;font-size:14px;font-weight:500;color:var(--t1);cursor:pointer;font-family:var(--font);}
+.soc:hover{background:var(--bg2);}
+.pwbar{height:4px;border-radius:4px;margin-top:6px;transition:all .3s;width:0;}
+.pwhint{font-size:11px;margin-top:4px;}
+.gndr{display:flex;gap:8px;}
+.gopt{flex:1;padding:9px;border:.5px solid var(--b2);border-radius:var(--r);font-size:13px;background:none;cursor:pointer;color:var(--t2);font-family:var(--font);text-align:center;transition:all .15s;}
+.gopt.sel{background:var(--blue-l);border-color:var(--blue);color:var(--blue);font-weight:600;}
 
-  /* SCROLL BODY */
-  .body { padding: 14px 14px 0; max-height: 75vh; overflow-y: auto; }
-  .body::-webkit-scrollbar { width: 4px; }
-  .body::-webkit-scrollbar-track { background: transparent; }
-  .body::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 4px; }
+/* ── ONBOARDING ── */
+.ob-wrap{background:var(--bg);min-height:600px;display:flex;flex-direction:column;}
+.ob-top{padding:20px 20px 0;}
+.ob-prog-row{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+.back-btn{background:none;border:none;cursor:pointer;color:var(--t2);padding:4px;display:flex;align-items:center;}
+.back-btn:hover{color:var(--t1);}
+.prog-track{flex:1;height:4px;background:var(--bg2);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--blue);border-radius:4px;transition:width .4s ease;}
+.prog-label{font-size:12px;color:var(--t2);font-weight:500;white-space:nowrap;}
+.ob-q-num{font-size:12px;font-weight:700;color:var(--blue);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;}
+.ob-q{font-size:22px;font-weight:700;color:var(--t1);line-height:1.3;margin-bottom:6px;}
+.ob-desc{font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:24px;}
+.ob-body{padding:0 20px;flex:1;overflow-y:auto;}
+.ob-foot{padding:20px;}
+.ob-next{width:100%;padding:14px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .15s;}
+.ob-next:disabled{background:var(--b2);cursor:not-allowed;color:var(--t3);}
+.ob-next:not(:disabled):hover{background:var(--blue-d);}
 
-  /* CARDS */
-  .card {
-    background: var(--bg-primary);
-    border: 0.5px solid var(--border-subtle);
-    border-radius: var(--radius-lg);
-    padding: 16px; margin-bottom: 12px;
-  }
-  .sec-label {
-    font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
-    color: var(--text-secondary); margin-bottom: 10px;
-  }
+/* option cards */
+.opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px;}
+.opt-card{border:.5px solid var(--b2);border-radius:var(--rl);padding:16px 12px;cursor:pointer;text-align:center;transition:all .15s;background:var(--bg);}
+.opt-card:hover{border-color:var(--blue);}
+.opt-card.sel{border-color:var(--blue);background:var(--blue-l);}
+.opt-card.sel .oc-label{color:var(--blue);}
+.opt-card.sel .oc-icon{filter:none;}
+.oc-icon{font-size:28px;margin-bottom:8px;display:block;}
+.oc-label{font-size:14px;font-weight:600;color:var(--t1);}
+.oc-sub{font-size:11px;color:var(--t2);margin-top:3px;}
 
-  /* GOAL CARD */
-  .goal-card { background: #185FA5; border: none; padding: 18px; }
-  .goal-chip {
-    display: inline-block; background: rgba(255,255,255,.18);
-    color: rgba(255,255,255,.85); font-size: 10px; letter-spacing: .06em;
-    text-transform: uppercase; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px;
-  }
-  .goal-title { font-size: 22px; font-weight: 600; color: #fff; line-height: 1.25; margin-bottom: 4px; }
-  .goal-sub { font-size: 13px; color: rgba(255,255,255,.7); margin-bottom: 14px; }
-  .goal-expand-btn {
-    display: flex; align-items: center; gap: 5px;
-    font-size: 12px; color: #B5D4F4;
-    background: none; border: none; cursor: pointer; padding: 0; font-family: var(--font);
-  }
-  .goal-expand-btn .chevron { transition: transform .25s; }
-  .goal-expand-btn.open .chevron { transform: rotate(180deg); }
-  .goal-details { overflow: hidden; max-height: 0; transition: max-height .35s ease, margin-top .25s; }
-  .goal-details.open { max-height: 240px; margin-top: 14px; }
-  .goal-detail-inner { border-top: 1px solid rgba(255,255,255,.2); padding-top: 12px; }
-  .goal-tag {
-    display: inline-block; background: rgba(255,255,255,.15);
-    color: #fff; font-size: 11px; padding: 3px 10px;
-    border-radius: 20px; margin: 3px 3px 0 0;
-  }
-  .goal-stat-row { display: flex; gap: 16px; margin-top: 14px; }
-  .goal-stat { flex: 1; }
-  .goal-stat-val { font-size: 18px; font-weight: 600; color: #fff; }
-  .goal-stat-lbl { font-size: 11px; color: rgba(255,255,255,.65); }
+/* grade list */
+.grade-list{display:flex;flex-direction:column;gap:8px;}
+.grade-item{border:.5px solid var(--b2);border-radius:var(--r);padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .15s;background:var(--bg);}
+.grade-item:hover{border-color:var(--blue);}
+.grade-item.sel{border-color:var(--blue);background:var(--blue-l);}
+.grade-item.sel .gi-label{color:var(--blue);font-weight:700;}
+.gi-dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--b2);flex-shrink:0;transition:all .15s;}
+.grade-item.sel .gi-dot{background:var(--blue);border-color:var(--blue);}
+.gi-label{font-size:14px;color:var(--t1);}
 
-  /* STEPPING STONES */
-  .stones-scroll { overflow-x: auto; padding-bottom: 6px; }
-  .stones-scroll::-webkit-scrollbar { height: 3px; }
-  .stones-scroll::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 4px; }
-  .stones-track { display: flex; align-items: flex-start; min-width: max-content; padding: 4px 0 2px; }
-  .stone { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 68px; }
-  .sline { width: 36px; height: 2px; margin-top: -28px; flex-shrink: 0; }
-  .sline.done { background: #1D9E75; }
-  .sline.active { background: #185FA5; }
-  .sline.future { background: var(--border-subtle); }
-  .scircle {
-    width: 36px; height: 36px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 600; border: 2px solid; flex-shrink: 0;
-  }
-  .scircle.done { background: #1D9E75; border-color: #1D9E75; color: #fff; }
-  .scircle.active { background: #185FA5; border-color: #185FA5; color: #fff; }
-  .scircle.future { background: var(--bg-primary); border-color: var(--border-mid); color: var(--text-secondary); }
-  .slabel { font-size: 9px; color: var(--text-secondary); text-align: center; line-height: 1.35; max-width: 64px; }
+/* goal input */
+.goal-inp{width:100%;font-size:16px;padding:14px 16px;border:.5px solid var(--b2);border-radius:var(--rl);background:var(--bg2);color:var(--t1);font-family:var(--font);outline:none;margin-bottom:16px;}
+.goal-inp:focus{border-color:var(--blue);}
+.preset-title{font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;}
+.preset-wrap{display:flex;flex-wrap:wrap;gap:8px;}
+.preset-tag{font-size:12px;padding:6px 14px;border:.5px solid var(--b2);border-radius:20px;cursor:pointer;color:var(--t2);background:none;font-family:var(--font);transition:all .15s;}
+.preset-tag:hover{border-color:var(--blue);color:var(--blue);}
 
-  /* MILESTONE BARS */
-  .ms-item { margin-bottom: 13px; }
-  .ms-item:last-child { margin-bottom: 0; }
-  .ms-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-  .ms-name { font-size: 13px; color: var(--text-primary); }
-  .ms-pct { font-size: 12px; font-weight: 600; }
-  .bar { height: 8px; background: var(--bg-secondary); border-radius: 4px; overflow: hidden; }
-  .bar-fill { height: 100%; border-radius: 4px; }
+/* year picker */
+.year-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.year-btn{padding:14px;border:.5px solid var(--b2);border-radius:var(--r);font-size:15px;font-weight:600;color:var(--t1);background:var(--bg);cursor:pointer;font-family:var(--font);transition:all .15s;text-align:center;}
+.year-btn:hover{border-color:var(--blue);}
+.year-btn.sel{background:var(--blue);border-color:var(--blue);color:#fff;}
+.sem-row{display:flex;gap:10px;}
+.sem-btn{flex:1;padding:11px;border:.5px solid var(--b2);border-radius:var(--r);font-size:14px;font-weight:500;color:var(--t2);background:none;cursor:pointer;font-family:var(--font);transition:all .15s;}
+.sem-btn:hover{border-color:var(--blue);}
+.sem-btn.sel{border-color:var(--blue);color:var(--blue);background:var(--blue-l);font-weight:600;}
+.sem-label{font-size:12px;color:var(--t2);margin-bottom:8px;}
 
-  /* TASKS */
-  .tasks-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-  .tasks-title { font-size: 16px; font-weight: 600; color: var(--text-primary); }
-  .add-task-btn {
-    display: flex; align-items: center; gap: 4px;
-    font-size: 12px; color: #185FA5;
-    background: #E6F1FB; border: none;
-    padding: 5px 12px; border-radius: 20px; cursor: pointer; font-weight: 600;
-    font-family: var(--font);
-  }
-  .add-task-btn:hover { background: #B5D4F4; }
-  .task-row {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 0; border-bottom: 0.5px solid var(--border-subtle);
-    cursor: pointer;
-  }
-  .task-row:last-of-type { border-bottom: none; }
-  .task-row.done .task-name { text-decoration: line-through; color: var(--text-tertiary); }
-  .task-row.done .task-dur { color: var(--text-tertiary); opacity: .6; }
-  .task-row.done .task-subj { opacity: .4; }
-  .check {
-    width: 24px; height: 24px; border-radius: 50%;
-    border: 1.5px solid var(--border-mid);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; transition: all .15s;
-  }
-  .check.done { background: #1D9E75; border-color: #1D9E75; }
-  .task-info { flex: 1; min-width: 0; }
-  .task-name { font-size: 14px; color: var(--text-primary); transition: color .2s; }
-  .task-dur { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
-  .task-subj { font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 20px; flex-shrink: 0; }
-  .subj-math { background: #E6F1FB; color: #0C447C; }
-  .subj-cs   { background: #E1F5EE; color: #085041; }
-  .subj-sat  { background: #FAEEDA; color: #633806; }
-  .subj-sci  { background: #EEEDFE; color: #3C3489; }
-  .subj-eng  { background: #FAECE7; color: #712B13; }
-  .add-area {
-    display: none; border-top: 0.5px solid var(--border-subtle);
-    padding-top: 10px; margin-top: 4px; gap: 8px; align-items: center;
-  }
-  .add-area.open { display: flex; }
-  .add-area input {
-    flex: 1; font-size: 13px; padding: 8px 12px;
-    border: 0.5px solid var(--border-mid); border-radius: var(--radius-md);
-    background: var(--bg-secondary); color: var(--text-primary);
-    font-family: var(--font); outline: none;
-  }
-  .add-area input:focus { border-color: #185FA5; }
-  .add-area button {
-    font-size: 13px; font-weight: 600; padding: 8px 16px;
-    border-radius: var(--radius-md); border: 0.5px solid var(--border-mid);
-    background: none; cursor: pointer; color: var(--text-primary);
-    font-family: var(--font);
-  }
+/* level sliders */
+.level-item{margin-bottom:18px;}
+.level-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.level-subj{font-size:14px;font-weight:600;color:var(--t1);}
+.level-val{font-size:13px;font-weight:600;color:var(--blue);}
+.level-btns{display:flex;gap:6px;}
+.lvl-btn{flex:1;padding:8px 4px;border:.5px solid var(--b2);border-radius:var(--r);font-size:12px;cursor:pointer;font-family:var(--font);background:none;color:var(--t2);transition:all .15s;}
+.lvl-btn:hover{border-color:var(--blue);}
+.lvl-btn.sel{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600;}
 
-  /* VERSE */
-  .verse-card { background: #EEEDFE; border: none; }
-  .verse-icon { margin-bottom: 8px; }
-  .verse-text { font-size: 13px; color: #3C3489; line-height: 1.75; font-style: italic; margin-bottom: 6px; }
-  .verse-ref { font-size: 11px; font-weight: 600; color: #534AB7; }
+/* hours */
+.hours-list{display:flex;flex-direction:column;gap:10px;}
+.hour-card{border:.5px solid var(--b2);border-radius:var(--rl);padding:16px 20px;cursor:pointer;display:flex;align-items:center;gap:14px;background:var(--bg);transition:all .15s;}
+.hour-card:hover{border-color:var(--blue);}
+.hour-card.sel{border-color:var(--blue);background:var(--blue-l);}
+.hour-card.sel .hc-main{color:var(--blue);}
+.hc-icon{font-size:24px;flex-shrink:0;}
+.hc-main{font-size:16px;font-weight:600;color:var(--t1);}
+.hc-sub{font-size:12px;color:var(--t2);margin-top:2px;}
 
-  /* AI CHAT BOTTOM */
-  .chat-bottom {
-    background: var(--bg-primary);
-    border-top: 0.5px solid var(--border-subtle);
-    padding: 10px 14px 16px;
-  }
-  .chat-preview {
-    background: #E6F1FB; border-radius: 10px 10px 10px 2px;
-    padding: 9px 12px; font-size: 13px; color: #0C447C;
-    margin-bottom: 10px; line-height: 1.55;
-  }
-  .chat-input-row { display: flex; gap: 8px; align-items: center; }
-  .chat-input-row input {
-    flex: 1; font-size: 13px; padding: 9px 14px;
-    border: 0.5px solid var(--border-mid); border-radius: 24px;
-    background: var(--bg-secondary); color: var(--text-primary);
-    font-family: var(--font); outline: none;
-  }
-  .chat-input-row input:focus { border-color: #185FA5; }
-  .chat-send {
-    width: 38px; height: 38px; border-radius: 50%;
-    background: #185FA5; border: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  }
-  .chat-send:hover { background: #0C447C; }
+/* ── ANALYZING ── */
+.analyzing-wrap{background:var(--blue);min-height:600px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 30px;text-align:center;}
+.an-icon{font-size:56px;margin-bottom:24px;animation:pulse 1.8s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+.an-title{font-size:22px;font-weight:700;color:#fff;margin-bottom:10px;}
+.an-sub{font-size:14px;color:rgba(255,255,255,.75);line-height:1.6;margin-bottom:36px;}
+.an-steps{display:flex;flex-direction:column;gap:10px;width:100%;}
+.an-step{display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(255,255,255,.12);border-radius:var(--r);opacity:.4;transition:opacity .5s;}
+.an-step.done{opacity:1;}
+.an-step-icon{font-size:18px;}
+.an-step-txt{font-size:13px;color:#fff;font-weight:500;}
+
+/* ── DASHBOARD ── */
+.top-nav{display:flex;align-items:center;gap:10px;padding:14px 18px;background:var(--bg);border-bottom:.5px solid var(--b1);}
+.avatar{width:40px;height:40px;border-radius:50%;background:#FAEEDA;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#633806;flex-shrink:0;}
+.greet{flex:1;}
+.gnm{font-size:15px;font-weight:600;color:var(--t1);}
+.gdt{font-size:11px;color:var(--t2);margin-top:1px;}
+.nav-icons{display:flex;gap:14px;align-items:center;}
+.ni{cursor:pointer;position:relative;display:flex;align-items:center;color:var(--t2);}
+.ni:hover{color:var(--t1);}
+.ndot{position:absolute;top:-1px;right:-1px;width:7px;height:7px;background:var(--red);border-radius:50%;border:1.5px solid var(--bg);}
+.dash-body{padding:14px 14px 0;max-height:72vh;overflow-y:auto;}
+.dash-body::-webkit-scrollbar{width:4px;}
+.dash-body::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px;}
+.card{background:var(--bg);border:.5px solid var(--b1);border-radius:var(--rl);padding:16px;margin-bottom:12px;}
+.slbl{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--t2);margin-bottom:10px;}
+.goal-card{background:var(--blue);border:none;padding:18px;}
+.gchip{display:inline-block;background:rgba(255,255,255,.18);color:rgba(255,255,255,.85);font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:10px;}
+.gtitle{font-size:22px;font-weight:600;color:#fff;line-height:1.25;margin-bottom:4px;}
+.gsub{font-size:13px;color:rgba(255,255,255,.7);margin-bottom:14px;}
+.gexpbtn{display:flex;align-items:center;gap:5px;font-size:12px;color:#B5D4F4;background:none;border:none;cursor:pointer;padding:0;font-family:var(--font);}
+.gchev{transition:transform .25s;}
+.gexpbtn.open .gchev{transform:rotate(180deg);}
+.gdet{overflow:hidden;max-height:0;transition:max-height .35s ease,margin-top .25s;}
+.gdet.open{max-height:240px;margin-top:14px;}
+.gdet-inner{border-top:1px solid rgba(255,255,255,.2);padding-top:12px;}
+.gtag{display:inline-block;background:rgba(255,255,255,.15);color:#fff;font-size:11px;padding:3px 10px;border-radius:20px;margin:3px 3px 0 0;}
+.gstat-row{display:flex;gap:16px;margin-top:14px;}
+.gstat{flex:1;}
+.gstat-val{font-size:18px;font-weight:600;color:#fff;}
+.gstat-lbl{font-size:11px;color:rgba(255,255,255,.65);}
+.stones-scroll{overflow-x:auto;padding-bottom:6px;}
+.stones-scroll::-webkit-scrollbar{height:3px;}
+.stones-scroll::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px;}
+.stones-track{display:flex;align-items:flex-start;min-width:max-content;padding:4px 0 2px;}
+.stone{display:flex;flex-direction:column;align-items:center;gap:5px;width:68px;}
+.sline{width:36px;height:2px;margin-top:-28px;flex-shrink:0;}
+.sline.dn{background:var(--green);}
+.sline.ac{background:var(--blue);}
+.sline.ft{background:var(--b1);}
+.scircle{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;border:2px solid;flex-shrink:0;}
+.scircle.dn{background:var(--green);border-color:var(--green);color:#fff;}
+.scircle.ac{background:var(--blue);border-color:var(--blue);color:#fff;}
+.scircle.ft{background:var(--bg);border-color:var(--b2);color:var(--t2);}
+.slabel{font-size:9px;color:var(--t2);text-align:center;line-height:1.35;max-width:64px;}
+.ms-item{margin-bottom:13px;}
+.ms-item:last-child{margin-bottom:0;}
+.ms-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.ms-name{font-size:13px;color:var(--t1);}
+.ms-pct{font-size:12px;font-weight:600;}
+.bar{height:8px;background:var(--bg2);border-radius:4px;overflow:hidden;}
+.bfill{height:100%;border-radius:4px;}
+.tasks-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.ttl{font-size:16px;font-weight:600;color:var(--t1);}
+.addbtn{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--blue);background:var(--blue-l);border:none;padding:5px 12px;border-radius:20px;cursor:pointer;font-weight:600;font-family:var(--font);}
+.task-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:.5px solid var(--b1);cursor:pointer;}
+.task-row:last-of-type{border-bottom:none;}
+.task-row.dn .tnm{text-decoration:line-through;color:var(--t3);}
+.task-row.dn .tdur{color:var(--t3);opacity:.6;}
+.task-row.dn .tsubj{opacity:.4;}
+.chk{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--b2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
+.chk.dn{background:var(--green);border-color:var(--green);}
+.tinfo{flex:1;min-width:0;}
+.tnm{font-size:14px;color:var(--t1);}
+.tdur{font-size:11px;color:var(--t2);margin-top:2px;}
+.tsubj{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;flex-shrink:0;}
+.s-math{background:#E6F1FB;color:#0C447C;}
+.s-cs{background:#E1F5EE;color:#085041;}
+.s-sat{background:#FAEEDA;color:#633806;}
+.s-sci{background:#EEEDFE;color:#3C3489;}
+.s-eng{background:#FAECE7;color:#712B13;}
+.s-kor{background:#FEF2F2;color:#7F1D1D;}
+.s-soc{background:#F0FDF4;color:#14532D;}
+.addarea{display:none;border-top:.5px solid var(--b1);padding-top:10px;margin-top:4px;gap:8px;align-items:center;}
+.addarea.open{display:flex;}
+.addarea input{flex:1;font-size:13px;padding:8px 12px;border:.5px solid var(--b2);border-radius:var(--r);background:var(--bg2);color:var(--t1);font-family:var(--font);outline:none;}
+.addarea input:focus{border-color:var(--blue);}
+.addarea button{font-size:13px;font-weight:600;padding:8px 16px;border-radius:var(--r);border:.5px solid var(--b2);background:none;cursor:pointer;color:var(--t1);font-family:var(--font);}
+.verse-card{background:#EEEDFE;border:none;}
+.verse-txt{font-size:13px;color:#3C3489;line-height:1.75;font-style:italic;margin-bottom:6px;margin-top:8px;}
+.verse-ref{font-size:11px;font-weight:600;color:var(--purple);}
+.chat-btm{background:var(--bg);border-top:.5px solid var(--b1);padding:10px 14px 16px;}
+.chat-prev{background:var(--blue-l);border-radius:10px 10px 10px 2px;padding:9px 12px;font-size:13px;color:var(--blue-d);margin-bottom:10px;line-height:1.55;}
+.chat-row{display:flex;gap:8px;align-items:center;}
+.chat-row input{flex:1;font-size:13px;padding:9px 14px;border:.5px solid var(--b2);border-radius:24px;background:var(--bg2);color:var(--t1);font-family:var(--font);outline:none;}
+.chat-row input:focus{border-color:var(--blue);}
+.chat-send{width:38px;height:38px;border-radius:50%;background:var(--blue);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.chat-send:hover{background:var(--blue-d);}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#111;color:#fff;font-size:13px;padding:10px 20px;border-radius:24px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;white-space:nowrap;}
+.toast.on{opacity:1;}
 </style>
 </head>
 <body>
+<div class="toast" id="toast"></div>
 <div class="shell">
 
-  <!-- TOP NAV -->
-  <div class="top-nav">
-    <div class="avatar">HJ</div>
-    <div class="greet">
-      <div class="greet-name">Hi, Haeun 👋</div>
-      <div class="greet-date" id="today-date"></div>
-    </div>
-    <div class="nav-icons">
-      <span class="ni" title="Notifications">
-        <!-- bell -->
-        <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        <span class="notif-dot"></span>
-      </span>
-      <span class="ni" title="Settings">
-        <!-- settings gear -->
-        <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      </span>
-      <span class="ni" title="Profile">
-        <!-- user circle -->
-        <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      </span>
-    </div>
+<!-- ══ LOGIN ══ -->
+<div class="screen active" id="s-login">
+<div class="auth-wrap">
+<div class="auth-head">
+  <div class="auth-logo">AI Future Planner</div>
+  <div class="auth-hl">Welcome back 👋</div>
+  <div class="auth-sub">Log in to continue your journey</div>
+</div>
+<div class="auth-body">
+  <button class="soc" onclick="socialLogin('Google')">
+    <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+    Continue with Google
+  </button>
+  <button class="soc" onclick="socialLogin('Apple')">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.45c1.49.07 2.54.82 3.4.82.85 0 2.44-.93 4.16-.79 1.44.12 2.68.65 3.54 1.73-3.14 1.88-2.51 5.93.9 7.07zm-4.62-13.4c-.78-1-2.07-1.77-3.3-1.68-.2 1.43.51 2.9 1.28 3.83.84.97 2.16 1.68 3.26 1.66.18-1.44-.43-2.9-1.24-3.81z"/></svg>
+    Continue with Apple
+  </button>
+  <div class="div-line">or log in with ID</div>
+  <div class="fl">
+    <label class="flabel">ID</label>
+    <input class="inp" id="li-id" type="text" placeholder="Enter your ID"/>
   </div>
-
-  <!-- SCROLL BODY -->
-  <div class="body">
-
-    <!-- FINAL GOAL -->
-    <div class="card goal-card">
-      <div class="goal-chip">final goal</div>
-      <div class="goal-title">Stanford University</div>
-      <div class="goal-sub">Computer Science · Class of 2028</div>
-      <button class="goal-expand-btn" id="expandBtn" onclick="toggleGoal()">
-        <span class="chevron">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B5D4F4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </span>
-        <span id="expandLabel">see details</span>
-      </button>
-      <div class="goal-details" id="goalDetails">
-        <div class="goal-detail-inner">
-          <div style="font-size:11px;color:rgba(255,255,255,.65);margin-bottom:6px;">required capabilities</div>
-          <span class="goal-tag">Advanced Math</span>
-          <span class="goal-tag">Programming</span>
-          <span class="goal-tag">SAT 1550+</span>
-          <span class="goal-tag">Research Project</span>
-          <span class="goal-tag">Leadership</span>
-          <div class="goal-stat-row">
-            <div class="goal-stat"><div class="goal-stat-val">18mo</div><div class="goal-stat-lbl">remaining</div></div>
-            <div class="goal-stat"><div class="goal-stat-val">42%</div><div class="goal-stat-lbl">overall progress</div></div>
-            <div class="goal-stat"><div class="goal-stat-val">Nov '27</div><div class="goal-stat-lbl">deadline</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- STEPPING STONES -->
-    <div class="card">
-      <div class="sec-label">stepping stones to your goal</div>
-      <div class="stones-scroll">
-        <div class="stones-track">
-          <div class="stone">
-            <div class="scircle done">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <div class="slabel">Study system setup</div>
-          </div>
-          <div class="sline done"></div>
-          <div class="stone">
-            <div class="scircle done">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <div class="slabel">Baseline assessment</div>
-          </div>
-          <div class="sline active"></div>
-          <div class="stone">
-            <div class="scircle active">3</div>
-            <div class="slabel">AP Calculus BC</div>
-          </div>
-          <div class="sline future"></div>
-          <div class="stone">
-            <div class="scircle future">4</div>
-            <div class="slabel">Python project</div>
-          </div>
-          <div class="sline future"></div>
-          <div class="stone">
-            <div class="scircle future">5</div>
-            <div class="slabel">SAT 1550+</div>
-          </div>
-          <div class="sline future"></div>
-          <div class="stone">
-            <div class="scircle future">6</div>
-            <div class="slabel">Research portfolio</div>
-          </div>
-          <div class="sline future"></div>
-          <div class="stone">
-            <div class="scircle future" style="background:#FAEEDA;border-color:#EF9F27;color:#633806;font-size:16px;">🎓</div>
-            <div class="slabel">Stanford application</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MILESTONE BARS -->
-    <div class="card">
-      <div class="sec-label">milestone progress</div>
-      <div class="ms-item">
-        <div class="ms-row"><span class="ms-name">Mathematics</span><span class="ms-pct" style="color:#185FA5;">72%</span></div>
-        <div class="bar"><div class="bar-fill" style="width:72%;background:#185FA5;"></div></div>
-      </div>
-      <div class="ms-item">
-        <div class="ms-row"><span class="ms-name">Coding &amp; CS</span><span class="ms-pct" style="color:#1D9E75;">45%</span></div>
-        <div class="bar"><div class="bar-fill" style="width:45%;background:#1D9E75;"></div></div>
-      </div>
-      <div class="ms-item">
-        <div class="ms-row"><span class="ms-name">SAT Preparation</span><span class="ms-pct" style="color:#EF9F27;">58%</span></div>
-        <div class="bar"><div class="bar-fill" style="width:58%;background:#EF9F27;"></div></div>
-      </div>
-      <div class="ms-item">
-        <div class="ms-row"><span class="ms-name">Portfolio / Projects</span><span class="ms-pct" style="color:#D4537E;">20%</span></div>
-        <div class="bar"><div class="bar-fill" style="width:20%;background:#D4537E;"></div></div>
-      </div>
-    </div>
-
-    <!-- TODAY'S TASKS -->
-    <div class="card">
-      <div class="tasks-header">
-        <div class="tasks-title">Today's tasks</div>
-        <button class="add-task-btn" onclick="toggleAddTask()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          add task
-        </button>
-      </div>
-      <div id="task-list">
-        <div class="task-row done" onclick="toggleTask(this)">
-          <div class="check done"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-          <div class="task-info"><div class="task-name">AP Calculus — 30 practice problems</div><div class="task-dur">2 hours · completed</div></div>
-          <span class="task-subj subj-math">Math</span>
-        </div>
-        <div class="task-row done" onclick="toggleTask(this)">
-          <div class="check done"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-          <div class="task-info"><div class="task-name">Read algorithms article</div><div class="task-dur">30 min · completed</div></div>
-          <span class="task-subj subj-cs">CS</span>
-        </div>
-        <div class="task-row" onclick="toggleTask(this)">
-          <div class="check"></div>
-          <div class="task-info"><div class="task-name">Python — build sorting visualizer</div><div class="task-dur">1.5 hours</div></div>
-          <span class="task-subj subj-cs">CS</span>
-        </div>
-        <div class="task-row" onclick="toggleTask(this)">
-          <div class="check"></div>
-          <div class="task-info"><div class="task-name">SAT vocabulary — 20 new words</div><div class="task-dur">30 min</div></div>
-          <span class="task-subj subj-sat">SAT</span>
-        </div>
-        <div class="task-row" onclick="toggleTask(this)">
-          <div class="check"></div>
-          <div class="task-info"><div class="task-name">Review AP Physics notes</div><div class="task-dur">45 min</div></div>
-          <span class="task-subj subj-sci">Science</span>
-        </div>
-      </div>
-      <div class="add-area" id="addArea">
-        <input type="text" id="newTaskInput" placeholder="new task name..." onkeydown="if(event.key==='Enter')addTask()" />
-        <button onclick="addTask()">add</button>
-      </div>
-      <div style="margin-top:10px;font-size:12px;color:var(--text-secondary);text-align:center;" id="task-summary">2 of 5 tasks completed</div>
-    </div>
-
-    <!-- BIBLE VERSE -->
-    <div class="card verse-card">
-      <div class="verse-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-      </div>
-      <div class="verse-text">"For I know the plans I have for you, declares the Lord, plans to prosper you and not to harm you, plans to give you hope and a future."</div>
-      <div class="verse-ref">— Jeremiah 29:11</div>
-    </div>
-
-    <div style="height:8px;"></div>
-  </div>
-
-  <!-- AI CHAT BOX -->
-  <div class="chat-bottom">
-    <div class="chat-preview" id="chatMsg">You're on track today, Haeun! 2 tasks done. Want me to adjust tonight's plan? 🎯</div>
-    <div class="chat-input-row">
-      <input type="text" id="chatIn" placeholder="ask your AI coach..." onkeydown="if(event.key==='Enter')sendChat()" />
-      <button class="chat-send" onclick="sendChat()" aria-label="Send">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+  <div class="fl">
+    <label class="flabel">Password</label>
+    <div class="eyewrap">
+      <input class="inp" id="li-pw" type="password" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()"/>
+      <button class="eyebtn" onclick="toggleEye('li-pw')" type="button">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
       </button>
     </div>
+    <div class="ferr" id="li-err">ID or password is incorrect.</div>
   </div>
-
+  <button class="btn" onclick="doLogin()">Log in</button>
+  <div class="switch">Don't have an account? <a onclick="go('s-register')">Create an account</a></div>
+</div>
+</div>
 </div>
 
+<!-- ══ REGISTER ══ -->
+<div class="screen" id="s-register">
+<div class="auth-wrap">
+<div class="auth-head">
+  <div class="auth-logo">AI Future Planner</div>
+  <div class="auth-hl">Create an account ✨</div>
+  <div class="auth-sub">Tell us a bit about yourself</div>
+</div>
+<div class="auth-body">
+  <div class="fl">
+    <label class="flabel">Full name <span style="color:var(--red)">*</span></label>
+    <input class="inp" id="r-name" type="text" placeholder="Your real name"/>
+    <div class="ferr" id="e-name">Please enter your full name.</div>
+  </div>
+  <div class="fl">
+    <label class="flabel">ID <span style="color:var(--red)">*</span></label>
+    <input class="inp" id="r-id" type="text" placeholder="4–20 characters, letters & numbers"/>
+    <div class="ferr" id="e-id">ID must be 4–20 characters (letters/numbers only).</div>
+  </div>
+  <div class="fl">
+    <label class="flabel">Password <span style="color:var(--red)">*</span></label>
+    <div class="eyewrap">
+      <input class="inp" id="r-pw" type="password" placeholder="8+ characters, include a number" oninput="checkPw()"/>
+      <button class="eyebtn" onclick="toggleEye('r-pw')" type="button">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
+    <div class="pwbar" id="pwbar"></div>
+    <div class="pwhint" id="pwhint"></div>
+    <div class="ferr" id="e-pw">8+ characters including at least one number.</div>
+  </div>
+  <div class="fl">
+    <label class="flabel">Confirm password <span style="color:var(--red)">*</span></label>
+    <div class="eyewrap">
+      <input class="inp" id="r-pw2" type="password" placeholder="Re-enter your password"/>
+      <button class="eyebtn" onclick="toggleEye('r-pw2')" type="button">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
+    <div class="ferr" id="e-pw2">Passwords do not match.</div>
+  </div>
+  <div class="fl">
+    <label class="flabel">Email <span style="color:var(--red)">*</span></label>
+    <input class="inp" id="r-email" type="email" placeholder="example@email.com"/>
+    <div class="ferr" id="e-email">Please enter a valid email address.</div>
+  </div>
+  <div class="fl">
+    <label class="flabel">Date of birth <span style="color:var(--red)">*</span></label>
+    <input class="inp" id="r-dob" type="date"/>
+    <div class="ferr" id="e-dob">Please enter your date of birth.</div>
+  </div>
+  <div class="fl">
+    <label class="flabel">Gender <span style="color:var(--red)">*</span></label>
+    <div class="gndr">
+      <button class="gopt" id="g-m" onclick="selGender('m')">Male</button>
+      <button class="gopt" id="g-f" onclick="selGender('f')">Female</button>
+      <button class="gopt" id="g-o" onclick="selGender('o')">Other</button>
+    </div>
+    <div class="ferr" id="e-gender">Please select your gender.</div>
+  </div>
+  <button class="btn" onclick="doRegister()">Create account</button>
+  <div class="switch">Already have an account? <a onclick="go('s-login')">Log in</a></div>
+</div>
+</div>
+</div>
+
+<!-- ══ OB 1: 학년 ══ -->
+<div class="screen" id="s-ob1">
+<div class="ob-wrap">
+<div class="ob-top">
+  <div class="ob-prog-row">
+    <div class="prog-track"><div class="prog-fill" style="width:16.6%"></div></div>
+    <span class="prog-label">1 / 6</span>
+  </div>
+  <div class="ob-q-num">Question 01</div>
+  <div class="ob-q">현재 학년이 어떻게 되나요?</div>
+  <div class="ob-desc">학년에 맞는 학습 로드맵을 설계해드릴게요.</div>
+</div>
+<div class="ob-body">
+  <div class="grade-list">
+    <div class="grade-item" onclick="selOb('grade','middle1',this)"><span class="gi-dot"></span><span class="gi-label">중학교 1학년</span></div>
+    <div class="grade-item" onclick="selOb('grade','middle2',this)"><span class="gi-dot"></span><span class="gi-label">중학교 2학년</span></div>
+    <div class="grade-item" onclick="selOb('grade','middle3',this)"><span class="gi-dot"></span><span class="gi-label">중학교 3학년</span></div>
+    <div class="grade-item" onclick="selOb('grade','high1',this)"><span class="gi-dot"></span><span class="gi-label">고등학교 1학년</span></div>
+    <div class="grade-item" onclick="selOb('grade','high2',this)"><span class="gi-dot"></span><span class="gi-label">고등학교 2학년</span></div>
+    <div class="grade-item" onclick="selOb('grade','high3',this)"><span class="gi-dot"></span><span class="gi-label">고등학교 3학년</span></div>
+    <div class="grade-item" onclick="selOb('grade','univ',this)"><span class="gi-dot"></span><span class="gi-label">대학교 / 기타</span></div>
+  </div>
+</div>
+<div class="ob-foot"><button class="ob-next" id="next1" disabled onclick="goOb(2)">다음 →</button></div>
+</div>
+</div>
+
+<!-- ══ OB 2: 학업 트랙 ══ -->
+<div class="screen" id="s-ob2">
+<div class="ob-wrap">
+<div class="ob-top">
+  <div class="ob-prog-row">
+    <button class="back-btn" onclick="goOb(1)">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="prog-track"><div class="prog-fill" style="width:33.2%"></div></div>
+    <span class="prog-label">2 / 6</span>
+  </div>
+  <div class="ob-q-num">Question 02</div>
+  <div class="ob-q">어떤 학업 트랙을 목표로 하나요?</div>
+  <div class="ob-desc">진로 방향에 맞는 과목과 역량을 분석합니다.</div>
+</div>
+<div class="ob-body">
+  <div class="opt-grid">
+    <div class="opt-card" onclick="selTrack('science',this)"><span class="oc-icon">🔬</span><div class="oc-label">이공계</div><div class="oc-sub">Science & Engineering</div></div>
+    <div class="opt-card" onclick="selTrack('medical',this)"><span class="oc-icon">🏥</span><div class="oc-label">의학/약학</div><div class="oc-sub">Medical / Pharmacy</div></div>
+    <div class="opt-card" onclick="selTrack('humanities',this)"><span class="oc-icon">📚</span><div class="oc-label">인문/사회</div><div class="oc-sub">Humanities / Social</div></div>
+    <div class="opt-card" onclick="selTrack('arts',this)"><span class="oc-icon">🎨</span><div class="oc-label">예체능</div><div class="oc-sub">Arts & Performance</div></div>
+    <div class="opt-card" onclick="selTrack('business',this)"><span class="oc-icon">💼</span><div class="oc-label">경영/경제</div><div class="oc-sub">Business & Economics</div></div>
+    <div class="opt-card" onclick="selTrack('abroad',this)"><span class="oc-icon">✈️</span><div class="oc-label">해외 진학</div><div class="oc-sub">Study Abroad</div></div>
+  </div>
+</div>
+<div class="ob-foot"><button class="ob-next" id="next2" disabled onclick="goOb(3)">다음 →</button></div>
+</div>
+</div>
+
+<!-- ══ OB 3: Final Goal ══ -->
+<div class="screen" id="s-ob3">
+<div class="ob-wrap">
+<div class="ob-top">
+  <div class="ob-prog-row">
+    <button class="back-btn" onclick="goOb(2)">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="prog-track"><div class="prog-fill" style="width:49.8%"></div></div>
+    <span class="prog-label">3 / 6</span>
+  </div>
+  <div class="ob-q-num">Question 03</div>
+  <div class="ob-q">최종 목표가 무엇인가요?</div>
+  <div class="ob-desc">구체적일수록 더 정확한 로드맵이 만들어져요.</div>
+</div>
+<div class="ob-body">
+  <input class="goal-inp" id="ob-goal" type="text" placeholder="예: 서울대 의대 진학, MIT CS 입학..." oninput="onGoalInput()"/>
+  <div class="preset-title">추천 목표 예시</div>
+  <div class="preset-wrap" id="preset-wrap"></div>
+</div>
+<div class="ob-foot"><button class="ob-next" id="next3" disabled onclick="goOb(4)">다음 →</button></div>
+</div>
+</div>
+
+<!-- ══ OB 4: 목표 달성 시점 ══ -->
+<div class="screen" id="s-ob4">
+<div class="ob-wrap">
+<div class="ob-top">
+  <div class="ob-prog-row">
+    <button class="back-btn" onclick="goOb(3)">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="prog-track"><div class="prog-fill" style="width:66.4%"></div></div>
+    <span class="prog-label">4 / 6</span>
+  </div>
+  <div class="ob-q-num">Question 04</div>
+  <div class="ob-q">언제까지 목표를 달성하고 싶나요?</div>
+  <div class="ob-desc">현실적인 타임라인을 바탕으로 마일스톤을 설정합니다.</div>
+</div>
+<div class="ob-body">
+  <div class="year-grid" id="year-grid"></div>
+  <div class="sem-label">목표 시기</div>
+  <div class="sem-row">
+    <button class="sem-btn" id="sem-1" onclick="selSem('상반기(1~6월)')">상반기 (1~6월)</button>
+    <button class="sem-btn" id="sem-2" onclick="selSem('하반기(7~12월)')">하반기 (7~12월)</button>
+  </div>
+</div>
+<div class="ob-foot"><button class="ob-next" id="next4" disabled onclick="goOb(5)">다음 →</button></div>
+</div>
+</div>
+
+<!-- ══ OB 5: 현재 수준 ══ -->
+<div class="screen" id="s-ob5">
+<div class="ob-wrap">
+<div class="ob-top">
+  <div class="ob-prog-row">
+    <button class="back-btn" onclick="goOb(4)">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="prog-track"><div class="prog-fill" style="width:83%"></div></div>
+    <span class="prog-label">5 / 6</span>
+  </div>
+  <div class="ob-q-num">Question 05</div>
+  <div class="ob-q">현재 각 과목의 수준은 어떤가요?</div>
+  <div class="ob-desc">솔직하게 평가할수록 맞춤형 계획이 만들어져요.</div>
+</div>
+<div class="ob-body" id="level-body"></div>
+<div class="ob-foot"><button class="ob-next" id="next5" onclick="goOb(6)">다음 →</button></div>
+</div>
+</div>
+
+<!-- ══ OB 6: 하루 공부 시간 ══ -->
+<div class="screen" id="s-ob6">
+<div class="ob-wrap">
+<div class="ob-top">
+  <div class="ob-prog-row">
+    <button class="back-btn" onclick="goOb(5)">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="prog-track"><div class="prog-fill" style="width:100%"></div></div>
+    <span class="prog-label">6 / 6</span>
+  </div>
+  <div class="ob-q-num">Question 06</div>
+  <div class="ob-q">하루에 공부할 수 있는 시간은?</div>
+  <div class="ob-desc">실현 가능한 시간으로 설정해야 꾸준히 실행할 수 있어요.</div>
+</div>
+<div class="ob-body">
+  <div class="hours-list">
+    <div class="hour-card" onclick="selHours('1~2시간',this)"><span class="hc-icon">🌱</span><div><div class="hc-main">1~2시간</div><div class="hc-sub">가볍게 시작 · 기초 다지기</div></div></div>
+    <div class="hour-card" onclick="selHours('3~4시간',this)"><span class="hc-icon">📖</span><div><div class="hc-main">3~4시간</div><div class="hc-sub">표준 학습량 · 꾸준한 성장</div></div></div>
+    <div class="hour-card" onclick="selHours('5~6시간',this)"><span class="hc-icon">🔥</span><div><div class="hc-main">5~6시간</div><div class="hc-sub">집중 모드 · 빠른 진척</div></div></div>
+    <div class="hour-card" onclick="selHours('7시간 이상',this)"><span class="hc-icon">⚡</span><div><div class="hc-main">7시간 이상</div><div class="hc-sub">수험생 모드 · 최고 강도</div></div></div>
+  </div>
+</div>
+<div class="ob-foot"><button class="ob-next" id="next6" disabled onclick="startAnalyzing()">분석 시작 →</button></div>
+</div>
+</div>
+
+<!-- ══ ANALYZING ══ -->
+<div class="screen" id="s-analyzing">
+<div class="analyzing-wrap">
+  <div class="an-icon">🤖</div>
+  <div class="an-title">AI가 분석 중이에요</div>
+  <div class="an-sub">입력하신 정보를 바탕으로<br>맞춤형 마일스톤을 설계하고 있어요</div>
+  <div class="an-steps">
+    <div class="an-step" id="an1"><span class="an-step-icon">🎯</span><span class="an-step-txt">목표 및 트랙 분석 중...</span></div>
+    <div class="an-step" id="an2"><span class="an-step-icon">📅</span><span class="an-step-txt">타임라인 계산 중...</span></div>
+    <div class="an-step" id="an3"><span class="an-step-icon">📊</span><span class="an-step-txt">현재 수준 평가 중...</span></div>
+    <div class="an-step" id="an4"><span class="an-step-icon">🗺️</span><span class="an-step-txt">마일스톤 생성 중...</span></div>
+    <div class="an-step" id="an5"><span class="an-step-icon">✅</span><span class="an-step-txt">일일 학습 계획 수립 중...</span></div>
+  </div>
+</div>
+</div>
+
+<!-- ══ DASHBOARD ══ -->
+<div class="screen" id="s-dashboard">
+<div class="top-nav">
+  <div class="avatar" id="d-avatar">HJ</div>
+  <div class="greet"><div class="gnm" id="d-name">Hi 👋</div><div class="gdt" id="d-date"></div></div>
+  <div class="nav-icons">
+    <span class="ni">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span class="ndot"></span>
+    </span>
+    <span class="ni">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </span>
+    <span class="ni" onclick="doLogout()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </span>
+  </div>
+</div>
+<div class="dash-body">
+  <!-- FINAL GOAL -->
+  <div class="card goal-card">
+    <div class="gchip">final goal</div>
+    <div class="gtitle" id="d-goal-title">My Goal</div>
+    <div class="gsub" id="d-goal-sub">Track · Target</div>
+    <button class="gexpbtn" id="gexpbtn" onclick="toggleGoal()">
+      <span class="gchev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B5D4F4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+      <span id="gexplbl">see details</span>
+    </button>
+    <div class="gdet" id="gdet">
+      <div class="gdet-inner">
+        <div style="font-size:11px;color:rgba(255,255,255,.65);margin-bottom:6px;">required capabilities</div>
+        <div id="d-caps"></div>
+        <div class="gstat-row" id="d-stats"></div>
+      </div>
+    </div>
+  </div>
+  <!-- STEPPING STONES -->
+  <div class="card">
+    <div class="slbl">stepping stones to your goal</div>
+    <div class="stones-scroll"><div class="stones-track" id="d-stones"></div></div>
+  </div>
+  <!-- MILESTONE BARS -->
+  <div class="card">
+    <div class="slbl">milestone progress</div>
+    <div id="d-bars"></div>
+  </div>
+  <!-- TASKS -->
+  <div class="card">
+    <div class="tasks-hdr">
+      <div class="ttl">Today's tasks</div>
+      <button class="addbtn" onclick="toggleAdd()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        add task
+      </button>
+    </div>
+    <div id="d-tasks"></div>
+    <div class="addarea" id="addarea">
+      <input type="text" id="newt" placeholder="new task name..." onkeydown="if(event.key==='Enter')addTask()"/>
+      <button onclick="addTask()">add</button>
+    </div>
+    <div style="margin-top:10px;font-size:12px;color:var(--t2);text-align:center;" id="t-summary"></div>
+  </div>
+  <!-- VERSE -->
+  <div class="card verse-card">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+    <div class="verse-txt">"For I know the plans I have for you, declares the Lord, plans to prosper you and not to harm you, plans to give you hope and a future."</div>
+    <div class="verse-ref">— Jeremiah 29:11</div>
+  </div>
+  <div style="height:8px;"></div>
+</div>
+<div class="chat-btm">
+  <div class="chat-prev" id="chat-prev">AI 코치가 맞춤형 계획을 준비했어요! 무엇이든 물어보세요 🎯</div>
+  <div class="chat-row">
+    <input type="text" id="chat-in" placeholder="AI 코치에게 물어보세요..." onkeydown="if(event.key==='Enter')sendChat()"/>
+    <button class="chat-send" onclick="sendChat()">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+</div>
+
+</div><!-- shell -->
+
 <script>
-  // Set real date
-  const now = new Date();
-  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  document.getElementById('today-date').textContent =
-    days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate() + ' · Day 12 streak';
+// ── storage ──
+var users = JSON.parse(localStorage.getItem('afp_users')||'[]');
+var session = JSON.parse(localStorage.getItem('afp_sess')||'null');
+var obData = { grade:'', track:'', goal:'', year:'', sem:'', level:{}, hours:'' };
 
-  function toggleGoal() {
-    const d = document.getElementById('goalDetails');
-    const b = document.getElementById('expandBtn');
-    const lbl = document.getElementById('expandLabel');
-    d.classList.toggle('open');
-    b.classList.toggle('open');
-    lbl.textContent = d.classList.contains('open') ? 'hide details' : 'see details';
+if(session){ if(session.onboarded){ buildDashboard(session); go('s-dashboard'); } else { go('s-ob1'); } }
+
+function go(id){ document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');}); document.getElementById(id).classList.add('active'); }
+function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('on'); setTimeout(function(){t.classList.remove('on');},2600); }
+function toggleEye(id){ var i=document.getElementById(id); i.type=i.type==='password'?'text':'password'; }
+function showErr(id,v){ document.getElementById(id).classList.toggle('on',v); }
+
+// ── LOGIN ──
+function doLogin(){
+  var id=document.getElementById('li-id').value.trim();
+  var pw=document.getElementById('li-pw').value;
+  var u=users.find(function(x){return x.id===id&&x.pw===pw;});
+  showErr('li-err',!u);
+  if(!u) return;
+  localStorage.setItem('afp_sess',JSON.stringify(u));
+  session=u;
+  if(u.onboarded){ buildDashboard(u); go('s-dashboard'); } else { go('s-ob1'); }
+}
+function socialLogin(p){
+  var u={name:p+' User',id:p.toLowerCase()+'_user',initials:p[0]+'U',onboarded:false};
+  session=u; go('s-ob1');
+}
+
+// ── REGISTER ──
+var selG='';
+function selGender(g){ selG=g; ['m','f','o'].forEach(function(x){document.getElementById('g-'+x).classList.remove('sel');}); document.getElementById('g-'+g).classList.add('sel'); }
+function checkPw(){
+  var pw=document.getElementById('r-pw').value, s=0;
+  if(pw.length>=8)s++; if(/[0-9]/.test(pw))s++; if(/[^a-zA-Z0-9]/.test(pw))s++;
+  var bar=document.getElementById('pwbar'), hint=document.getElementById('pwhint');
+  var cols=['#E24B4A','#EF9F27','#1D9E75'], lbs=['약함','보통','강함'];
+  if(!pw.length){bar.style.width='0';hint.textContent='';return;}
+  bar.style.width=(s*33)+'%'; bar.style.background=cols[s-1]||cols[0];
+  hint.textContent=lbs[s-1]||'약함'; hint.style.color=cols[s-1]||cols[0];
+}
+function doRegister(){
+  var name=document.getElementById('r-name').value.trim();
+  var id=document.getElementById('r-id').value.trim();
+  var pw=document.getElementById('r-pw').value;
+  var pw2=document.getElementById('r-pw2').value;
+  var email=document.getElementById('r-email').value.trim();
+  var dob=document.getElementById('r-dob').value;
+  var ok=true;
+  function chk(eid,cond){showErr(eid,!cond);if(!cond)ok=false;}
+  chk('e-name',name);
+  chk('e-id',/^[a-zA-Z0-9]{4,20}$/.test(id));
+  chk('e-pw',pw.length>=8&&/[0-9]/.test(pw));
+  chk('e-pw2',pw===pw2);
+  chk('e-email',/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+  chk('e-dob',dob);
+  chk('e-gender',selG);
+  if(!ok) return;
+  if(users.find(function(u){return u.id===id;})){showErr('e-id',true);document.getElementById('e-id').textContent='이미 사용 중인 ID예요.';return;}
+  var initials=name.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+  var u={name:name,id:id,pw:pw,email:email,dob:dob,gender:selG,initials:initials,onboarded:false};
+  users.push(u); localStorage.setItem('afp_users',JSON.stringify(users));
+  localStorage.setItem('afp_sess',JSON.stringify(u)); session=u;
+  toast('계정이 생성됐어요! 환영합니다 🎉');
+  setTimeout(function(){go('s-ob1');},700);
+}
+
+// ── ONBOARDING ──
+function goOb(n){ go('s-ob'+n); if(n===3) buildPresets(); if(n===4) buildYears(); if(n===5) buildLevels(); }
+
+// Q1 grade
+function selOb(key,val,el){
+  obData[key]=val;
+  el.closest('.grade-list, .ob-body').querySelectorAll('.grade-item').forEach(function(e){e.classList.remove('sel');});
+  el.classList.add('sel');
+  document.getElementById('next1').disabled=false;
+}
+
+// Q2 track
+function selTrack(val,el){
+  obData.track=val;
+  document.querySelectorAll('#s-ob2 .opt-card').forEach(function(e){e.classList.remove('sel');});
+  el.classList.add('sel');
+  document.getElementById('next2').disabled=false;
+}
+
+// Q3 goal
+var presets={
+  science:['카이스트 전자공학','POSTECH 컴퓨터공학','서울대 공과대학','삼성전자 연구원'],
+  medical:['서울대 의과대학','연세대 의대','고려대 의대','약학대학 진학'],
+  humanities:['서울대 법학전문대학원','한국외대 국제학부','연세대 사회과학대학','외교관 시험 합격'],
+  arts:['홍익대 미술대학','한예종 입학','K-POP 아티스트 데뷔','국립발레단 입단'],
+  business:['서울대 경영대학','고려대 경영학과','CFA 취득','대기업 경영직 입사'],
+  abroad:['Stanford University CS','MIT Engineering','Harvard Business School','Oxford / Cambridge']
+};
+function buildPresets(){
+  var wrap=document.getElementById('preset-wrap');
+  var list=presets[obData.track]||presets.abroad;
+  wrap.innerHTML=list.map(function(p){
+    return '<button class="preset-tag" onclick="setGoal(\''+p+'\')">'+p+'</button>';
+  }).join('');
+}
+function setGoal(v){ document.getElementById('ob-goal').value=v; document.getElementById('next3').disabled=false; }
+function onGoalInput(){ document.getElementById('next3').disabled=!document.getElementById('ob-goal').value.trim(); }
+
+// Q4 year/sem
+var selYear='', selSemV='';
+function buildYears(){
+  var now=new Date().getFullYear();
+  var grid=document.getElementById('year-grid');
+  grid.innerHTML='';
+  for(var y=now;y<=now+5;y++){
+    (function(yr){
+      var b=document.createElement('button');
+      b.className='year-btn'; b.textContent=yr+'년';
+      b.onclick=function(){ selYear=yr; document.querySelectorAll('.year-btn').forEach(function(x){x.classList.remove('sel');}); b.classList.add('sel'); checkYearSem(); };
+      grid.appendChild(b);
+    })(y);
   }
+}
+function selSem(v){ selSemV=v; document.querySelectorAll('.sem-btn').forEach(function(b){b.classList.remove('sel');}); event.target.classList.add('sel'); checkYearSem(); }
+function checkYearSem(){ if(selYear&&selSemV){ obData.year=selYear; obData.sem=selSemV; document.getElementById('next4').disabled=false; } }
 
-  const CHECK_SVG = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+// Q5 levels
+var trackSubjects={
+  science:['수학','물리','화학','영어','정보/코딩'],
+  medical:['수학','생명과학','화학','영어','국어'],
+  humanities:['국어','사회','역사','영어','논술'],
+  arts:['전공 실기','국어','영어','예술사/이론','포트폴리오'],
+  business:['수학','경제','영어','사회','논술'],
+  abroad:['수학','영어(SAT)','코딩','과학','에세이']
+};
+function buildLevels(){
+  var body=document.getElementById('level-body');
+  var subjects=trackSubjects[obData.track]||trackSubjects.abroad;
+  body.innerHTML='<div style="padding:0 0 12px;">';
+  subjects.forEach(function(subj){
+    obData.level[subj]=obData.level[subj]||3;
+    body.innerHTML+='<div class="level-item"><div class="level-row"><span class="level-subj">'+subj+'</span><span class="level-val" id="lv-'+subj+'">'+levelLabel(obData.level[subj])+'</span></div><div class="level-btns">'+
+    [1,2,3,4,5].map(function(n){
+      return '<button class="lvl-btn'+(obData.level[subj]===n?' sel':'')+'" onclick="setLevel(\''+subj+'\','+n+',this)">'+levelLabel(n)+'</button>';
+    }).join('')+'</div></div>';
+  });
+  body.innerHTML+='</div>';
+}
+var lvlLbls=['매우 부족','부족','보통','잘함','매우 잘함'];
+function levelLabel(n){return lvlLbls[n-1];}
+function setLevel(subj,n,el){
+  obData.level[subj]=n;
+  el.closest('.level-btns').querySelectorAll('.lvl-btn').forEach(function(b){b.classList.remove('sel');});
+  el.classList.add('sel');
+  document.getElementById('lv-'+subj).textContent=levelLabel(n);
+}
 
-  function toggleTask(row) {
-    const check = row.querySelector('.check');
-    const dur = row.querySelector('.task-dur');
-    const isDone = row.classList.toggle('done');
-    check.classList.toggle('done', isDone);
-    check.innerHTML = isDone ? CHECK_SVG : '';
-    if (isDone && !dur.textContent.includes('completed')) dur.textContent += ' · completed';
-    if (!isDone) dur.textContent = dur.textContent.replace(' · completed', '');
-    updateSummary();
+// Q6 hours
+function selHours(v,el){
+  obData.hours=v;
+  document.querySelectorAll('.hour-card').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');
+  document.getElementById('next6').disabled=false;
+}
+
+// ── ANALYZING ──
+function startAnalyzing(){
+  obData.goal=document.getElementById('ob-goal').value.trim();
+  go('s-analyzing');
+  var steps=['an1','an2','an3','an4','an5'];
+  steps.forEach(function(id,i){
+    setTimeout(function(){document.getElementById(id).classList.add('done');},700*(i+1));
+  });
+  setTimeout(function(){ finalizeOnboarding(); },4200);
+}
+
+function finalizeOnboarding(){
+  if(session){
+    session.obData=obData;
+    session.onboarded=true;
+    var idx=users.findIndex(function(u){return u.id===session.id;});
+    if(idx>=0){users[idx]=session; localStorage.setItem('afp_users',JSON.stringify(users));}
+    localStorage.setItem('afp_sess',JSON.stringify(session));
   }
+  buildDashboard(session);
+  go('s-dashboard');
+}
 
-  function updateSummary() {
-    const all = document.querySelectorAll('.task-row').length;
-    const done = document.querySelectorAll('.task-row.done').length;
-    document.getElementById('task-summary').textContent = done + ' of ' + all + ' tasks completed';
-  }
+// ── DASHBOARD BUILD ──
+var trackCaps={
+  science:['고등 수학','물리/화학','코딩 기초','수능 준비','이공계 포트폴리오'],
+  medical:['생명과학','유기화학','수능 최상위','면접 준비','봉사/연구 경험'],
+  humanities:['비문학 독해','사탐 심화','논술 작성','수능 국어','영어 독해'],
+  arts:['실기 완성도','포트폴리오','예술사 이론','영어','대입 면접'],
+  business:['수리 통계','경제학 기초','영어 에세이','수능 사탐','논리적 글쓰기'],
+  abroad:['SAT/ACT','Advanced Math','프로그래밍','리서치 프로젝트','에세이 & 추천서']
+};
+var trackMilestones={
+  science:[['기초 점검 & 계획 수립','완료'],['수학 심화 과정','진행 중'],['물리/화학 실력 강화','예정'],['수능/입시 모의고사','예정'],['최종 지원 & 면접','예정']],
+  medical:[['기초 점검 & 계획 수립','완료'],['생명과학 심화','진행 중'],['화학 집중 학습','예정'],['수능 모의고사 & 피드백','예정'],['의대 지원 & 면접','예정']],
+  humanities:[['기초 점검 & 계획 수립','완료'],['국어 비문학 집중','진행 중'],['사탐 전 과목 정리','예정'],['논술 실전 연습','예정'],['수능 & 대입 지원','예정']],
+  arts:[['기초 점검 & 계획 수립','완료'],['실기 기본기 강화','진행 중'],['포트폴리오 제작','예정'],['실기 시험 준비','예정'],['대입 실기 & 면접','예정']],
+  business:[['기초 점검 & 계획 수립','완료'],['수리/통계 강화','진행 중'],['경제학 원론 완성','예정'],['영어 에세이 작성','예정'],['대입 지원 & 면접','예정']],
+  abroad:[['기초 점검 & 계획 수립','완료'],['SAT 기초 완성','진행 중'],['리서치 프로젝트 착수','예정'],['SAT 목표 점수 달성','예정'],['대학 지원 & 에세이','예정']]
+};
+var trackBars={
+  science:[['수학','#185FA5'],['물리/화학','#1D9E75'],['영어','#EF9F27'],['포트폴리오','#D4537E']],
+  medical:[['생명과학','#185FA5'],['화학','#1D9E75'],['수능 국어','#EF9F27'],['면접 준비','#D4537E']],
+  humanities:[['국어','#185FA5'],['사탐','#1D9E75'],['영어','#EF9F27'],['논술','#D4537E']],
+  arts:[['실기','#185FA5'],['포트폴리오','#1D9E75'],['이론','#EF9F27'],['영어','#D4537E']],
+  business:[['수학/통계','#185FA5'],['경제학','#1D9E75'],['영어','#EF9F27'],['논술','#D4537E']],
+  abroad:[['수학','#185FA5'],['SAT 영어','#1D9E75'],['코딩','#EF9F27'],['포트폴리오','#D4537E']]
+};
+var trackTasks={
+  science:[{n:'수학 심화 문제 30문항',d:'2시간',s:'s-math'},{n:'물리 개념 정리',d:'1시간',s:'s-sci'},{n:'수능 기출 분석',d:'45분',s:'s-kor'},{n:'영어 단어 암기',d:'30분',s:'s-eng'}],
+  medical:[{n:'생명과학 단원 정리',d:'2시간',s:'s-sci'},{n:'유기화학 반응식 연습',d:'1.5시간',s:'s-sci'},{n:'수능 국어 비문학',d:'1시간',s:'s-kor'},{n:'의학 관련 영어 읽기',d:'30분',s:'s-eng'}],
+  humanities:[{n:'비문학 독해 5지문',d:'1시간',s:'s-kor'},{n:'사탐 개념 정리',d:'1.5시간',s:'s-soc'},{n:'논술 한 편 작성',d:'2시간',s:'s-kor'},{n:'영어 독해 연습',d:'30분',s:'s-eng'}],
+  arts:[{n:'실기 기본기 연습',d:'2시간',s:'s-math'},{n:'포트폴리오 작업',d:'1.5시간',s:'s-cs'},{n:'예술사 이론 정리',d:'1시간',s:'s-soc'},{n:'영어 회화 연습',d:'30분',s:'s-eng'}],
+  business:[{n:'미적분 / 통계 문제',d:'1.5시간',s:'s-math'},{n:'경제학 개념 정리',d:'1시간',s:'s-soc'},{n:'영어 에세이 작성',d:'1시간',s:'s-eng'},{n:'시사 뉴스 요약',d:'30분',s:'s-soc'}],
+  abroad:[{n:'SAT Math 30문항',d:'2시간',s:'s-math'},{n:'SAT 영어 독해',d:'1시간',s:'s-sat'},{n:'코딩 프로젝트 작업',d:'1.5시간',s:'s-cs'},{n:'에세이 초안 작성',d:'1시간',s:'s-eng'}]
+};
 
-  function toggleAddTask() {
-    const a = document.getElementById('addArea');
-    a.classList.toggle('open');
-    if (a.classList.contains('open')) document.getElementById('newTaskInput').focus();
-  }
+var CHECK_SVG='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 
-  const subjects = ['Math','CS','SAT','Science','English'];
-  const subjectClasses = ['subj-math','subj-cs','subj-sat','subj-sci','subj-eng'];
+function buildDashboard(user){
+  var ob=(user&&user.obData)||{track:'abroad',goal:'Stanford University CS',year:2027,sem:'하반기(7~12월)',level:{},hours:'3~4시간'};
+  var track=ob.track||'abroad';
+  var firstName=(user&&user.name)?user.name.split(' ')[0]:'Student';
+  var initials=(user&&user.initials)||firstName.slice(0,2).toUpperCase();
 
-  function addTask() {
-    const input = document.getElementById('newTaskInput');
-    const val = input.value.trim();
-    if (!val) return;
-    const list = document.getElementById('task-list');
-    const idx = Math.floor(Math.random() * subjects.length);
-    const row = document.createElement('div');
-    row.className = 'task-row';
-    row.onclick = function() { toggleTask(this); };
-    row.innerHTML =
-      '<div class="check"></div>' +
-      '<div class="task-info"><div class="task-name">' + val + '</div><div class="task-dur">— min</div></div>' +
-      '<span class="task-subj ' + subjectClasses[idx] + '">' + subjects[idx] + '</span>';
-    list.appendChild(row);
-    input.value = '';
-    document.getElementById('addArea').classList.remove('open');
-    updateSummary();
-  }
+  document.getElementById('d-avatar').textContent=initials;
+  document.getElementById('d-name').textContent='Hi, '+firstName+' 👋';
+  var now=new Date();
+  var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('d-date').textContent=days[now.getDay()]+', '+months[now.getMonth()]+' '+now.getDate()+' · Day 1 streak';
 
-  const replies = [
-    "Sure! I'll move the vocabulary session to tomorrow and shorten Python to 45 min. Rest is part of the plan. 💙",
-    "You're 6% ahead of your math target this week — great momentum! Keep the coding session tonight.",
-    "Missing one day is fine. I'll spread those tasks over the next 3 days. Your streak is safe!",
-    "Based on your pace, you'll hit SAT 1550 by October. Keep up the vocabulary practice.",
-    "Your strongest subject right now is math. Consider starting your CS project earlier to close the gap.",
-    "Great question! Your overall progress is at 42%. You're right on schedule for a November 2027 application."
-  ];
-  let ri = 0;
+  // Goal
+  var trackNames={science:'이공계',medical:'의학/약학',humanities:'인문/사회',arts:'예체능',business:'경영/경제',abroad:'해외 진학'};
+  document.getElementById('d-goal-title').textContent=ob.goal||'My Goal';
+  document.getElementById('d-goal-sub').textContent=(trackNames[track]||track)+' · '+((ob.year||2027)+'년 '+(ob.sem||'하반기'));
 
-  function sendChat() {
-    const inp = document.getElementById('chatIn');
-    const msg = inp.value.trim();
-    if (!msg) return;
-    inp.value = '';
-    document.getElementById('chatMsg').textContent = 'thinking...';
-    setTimeout(function() {
-      document.getElementById('chatMsg').textContent = replies[ri % replies.length];
-      ri++;
-    }, 700);
-  }
+  // Caps
+  var caps=trackCaps[track]||trackCaps.abroad;
+  document.getElementById('d-caps').innerHTML=caps.map(function(c){return '<span class="gtag">'+c+'</span>';}).join('');
+
+  // Stats: months remaining
+  var target=new Date((ob.year||2027),ob.sem&&ob.sem.includes('상')? 5:11,1);
+  var months_left=Math.max(1,Math.round((target-now)/(1000*60*60*24*30)));
+  document.getElementById('d-stats').innerHTML=
+    '<div class="gstat"><div class="gstat-val">'+months_left+'개월</div><div class="gstat-lbl">남은 기간</div></div>'+
+    '<div class="gstat"><div class="gstat-val">5%</div><div class="gstat-lbl">전체 진행률</div></div>'+
+    '<div class="gstat"><div class="gstat-val">'+(ob.year||2027)+'</div><div class="gstat-lbl">목표 연도</div></div>';
+
+  // Stepping stones
+  var ms=trackMilestones[track]||trackMilestones.abroad;
+  var stHTML='';
+  ms.forEach(function(m,i){
+    var state=m[1]==='완료'?'dn':m[1]==='진행 중'?'ac':'ft';
+    var lineState=i>0?(ms[i-1][1]==='완료'?'dn':ms[i-1][1]==='진행 중'?'ac':'ft'):'';
+    if(i>0) stHTML+='<div class="sline '+lineState+'"></div>';
+    var inner=state==='dn'?CHECK_SVG:(i+1).toString();
+    stHTML+='<div class="stone"><div class="scircle '+state+'">'+inner+'</div><div class="slabel">'+m[0]+'</div></div>';
+  });
+  stHTML+='<div class="sline ft"></div><div class="stone"><div class="scircle ft" style="background:#FAEEDA;border-color:#EF9F27;color:#633806;font-size:15px;">🎓</div><div class="slabel">최종 목표 달성</div></div>';
+  document.getElementById('d-stones').innerHTML=stHTML;
+
+  // Milestone bars — use level data for initial %
+  var bars=trackBars[track]||trackBars.abroad;
+  var subjects=Object.keys(ob.level||{});
+  var bHTML='';
+  bars.forEach(function(b,i){
+    var subj=subjects[i]||b[0];
+    var raw=(ob.level&&ob.level[subj])||3;
+    var pct=Math.round((raw/5)*60)+10; // 10–70% based on self-assessment
+    bHTML+='<div class="ms-item"><div class="ms-row"><span class="ms-name">'+b[0]+'</span><span class="ms-pct" style="color:'+b[1]+';">'+pct+'%</span></div><div class="bar"><div class="bfill" style="width:'+pct+'%;background:'+b[1]+';"></div></div></div>';
+  });
+  document.getElementById('d-bars').innerHTML=bHTML;
+
+  // Tasks
+  var tasks=trackTasks[track]||trackTasks.abroad;
+  var tHTML='';
+  tasks.forEach(function(t,i){
+    var done=i<1;
+    tHTML+='<div class="task-row'+(done?' dn':'')+'" onclick="toggleTask(this)">'+
+      '<div class="chk'+(done?' dn':'')+'">'+( done?CHECK_SVG:''  )+'</div>'+
+      '<div class="tinfo"><div class="tnm">'+t.n+'</div><div class="tdur">'+t.d+(done?' · completed':'')+'</div></div>'+
+      '<span class="tsubj '+t.s+'">'+t.s.replace('s-','').replace('math','Math').replace('cs','CS').replace('sat','SAT').replace('sci','Science').replace('eng','English').replace('kor','국어').replace('soc','사회')+'</span>'+
+      '</div>';
+  });
+  document.getElementById('d-tasks').innerHTML=tHTML;
+  updateSummary();
+
+  // Chat greeting
+  document.getElementById('chat-prev').textContent=firstName+'님의 목표 분석이 완료됐어요! 오늘 첫 번째 학습을 시작해볼까요? 💪';
+}
+
+function toggleGoal(){
+  var d=document.getElementById('gdet'), b=document.getElementById('gexpbtn'), l=document.getElementById('gexplbl');
+  d.classList.toggle('open'); b.classList.toggle('open');
+  l.textContent=d.classList.contains('open')?'hide details':'see details';
+}
+function toggleTask(row){
+  var chk=row.querySelector('.chk'), dur=row.querySelector('.tdur');
+  var dn=row.classList.toggle('dn');
+  chk.classList.toggle('dn',dn); chk.innerHTML=dn?CHECK_SVG:'';
+  if(dn&&dur.textContent.indexOf('completed')<0) dur.textContent+=' · completed';
+  if(!dn) dur.textContent=dur.textContent.replace(' · completed','');
+  updateSummary();
+}
+function updateSummary(){
+  var all=document.querySelectorAll('#d-tasks .task-row').length;
+  var done=document.querySelectorAll('#d-tasks .task-row.dn').length;
+  document.getElementById('t-summary').textContent=done+' / '+all+' tasks completed';
+}
+function toggleAdd(){ var a=document.getElementById('addarea'); a.classList.toggle('open'); if(a.classList.contains('open')) document.getElementById('newt').focus(); }
+var sbjList=['s-math','s-cs','s-sat','s-sci','s-eng','s-kor','s-soc'];
+var sbjName=['Math','CS','SAT','Science','English','국어','사회'];
+function addTask(){
+  var input=document.getElementById('newt'), val=input.value.trim(); if(!val) return;
+  var idx=Math.floor(Math.random()*sbjList.length);
+  var row=document.createElement('div'); row.className='task-row'; row.onclick=function(){toggleTask(this);};
+  row.innerHTML='<div class="chk"></div><div class="tinfo"><div class="tnm">'+val+'</div><div class="tdur">— min</div></div><span class="tsubj '+sbjList[idx]+'">'+sbjName[idx]+'</span>';
+  document.getElementById('d-tasks').appendChild(row);
+  input.value=''; document.getElementById('addarea').classList.remove('open'); updateSummary();
+}
+
+var replies=['네! 오늘 어려운 부분은 내일로 미루고 집중할 과목을 먼저 해결해요. 💪','현재 진행 상황을 보면 잘 하고 계세요! 이 속도라면 목표 달성 충분해요.','하루 빠지는 건 괜찮아요. 빠진 분량은 3일에 걸쳐 나눠서 채울게요.','가장 약한 부분에 집중하는 게 가장 빠른 성장 방법이에요!','목표까지 꾸준히 가는 게 중요해요. 오늘도 한 걸음씩 나아가봐요 🎯'];
+var ri=0;
+function sendChat(){
+  var inp=document.getElementById('chat-in'), v=inp.value.trim(); if(!v) return;
+  inp.value=''; document.getElementById('chat-prev').textContent='생각 중...';
+  setTimeout(function(){document.getElementById('chat-prev').textContent=replies[ri%replies.length];ri++;},700);
+}
+function doLogout(){
+  localStorage.removeItem('afp_sess'); session=null;
+  obData={grade:'',track:'',goal:'',year:'',sem:'',level:{},hours:''};
+  go('s-login'); toast('로그아웃 됐어요.');
+}
 </script>
 </body>
 </html>
