@@ -43,6 +43,10 @@ function buildDashboard(user) {
     .map(c => `<span class="gtag">${c}</span>`)
     .join('');
 
+  const verse = BIBLE_VERSES[Math.floor(Math.random() * BIBLE_VERSES.length)];
+  document.getElementById('verse-txt').textContent = verse.text;
+  document.getElementById('verse-ref').textContent = verse.ref;
+
   const targetDate = new Date(ob.year || 2027, ob.sem === 'First half' ? 5 : 11, 1);
   const monthsLeft = Math.max(1, Math.round((targetDate - now) / (1000 * 60 * 60 * 24 * 30)));
   document.getElementById('d-stats').innerHTML = `
@@ -140,19 +144,22 @@ function toggleAdd() {
 
 function addTask() {
   const input = document.getElementById('newt');
+  const select = document.getElementById('new-subject');
   const val   = input.value.trim();
   if (!val) return;
 
-  const idx  = Math.floor(Math.random() * TASK_SUBJECT_LIST.length);
+  const subject = select.value;
+  const subjectName = select.selectedOptions[0].textContent || 'Task';
   const row  = document.createElement('div');
   row.className = 'task-row';
   row.onclick   = function() { toggleTask(this); };
   row.innerHTML = `
     <div class="chk"></div>
     <div class="tinfo"><div class="tnm">${val}</div><div class="tdur">— min</div></div>
-    <span class="tsubj ${TASK_SUBJECT_LIST[idx]}">${TASK_SUBJECT_NAMES[idx]}</span>`;
+    <span class="tsubj ${subject}">${subjectName}</span>`;
   document.getElementById('d-tasks').appendChild(row);
   input.value = '';
+  select.selectedIndex = 0;
   document.getElementById('addarea').classList.remove('open');
   updateSummary();
 }

@@ -16,6 +16,14 @@ const TRACK_NAMES = {
   abroad:     'Study Abroad',
 };
 
+const BIBLE_VERSES = [
+  { text: '“I can do all things through him who strengthens me.”', ref: '— Philippians 4:13' },
+  { text: '“For I know the plans I have for you, declares the Lord, plans to prosper you and not to harm you, plans to give you hope and a future.”', ref: '— Jeremiah 29:11' },
+  { text: '“But those who hope in the Lord will renew their strength. They will soar on wings like eagles.”', ref: '— Isaiah 40:31' },
+  { text: '“Trust in the Lord with all your heart, and do not lean on your own understanding.”', ref: '— Proverbs 3:5' },
+  { text: '“Delight yourself in the Lord, and he will give you the desires of your heart.”', ref: '— Psalm 37:4' },
+];
+
 const TRACK_CAPS = {
   science:    ['Advanced Math', 'Physics/Chemistry', 'Coding Basics', 'Exam Prep', 'Engineering Portfolio'],
   medical:    ['Biology', 'Organic Chemistry', 'High-Level Exam Prep', 'Interview Prep', 'Research Experience'],
