@@ -63,7 +63,7 @@ function buildYears() {
   for (let y = now; y <= now + 5; y++) {
     const btn = document.createElement('button');
     btn.className   = 'year-btn';
-    btn.textContent = y + '년';
+    btn.textContent = y;
     btn.onclick = () => {
       selYear = y;
       document.querySelectorAll('.year-btn').forEach(b => b.classList.remove('sel'));

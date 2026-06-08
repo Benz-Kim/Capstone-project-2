@@ -5,70 +5,70 @@
 
 const CHECK_SVG = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 
-const LVL_LABELS = ['매우 부족', '부족', '보통', '잘함', '매우 잘함'];
+const LVL_LABELS = ['Very Low', 'Low', 'Average', 'Strong', 'Very Strong'];
 
 const TRACK_NAMES = {
-  science:    '이공계',
-  medical:    '의학/약학',
-  humanities: '인문/사회',
-  arts:       '예체능',
-  business:   '경영/경제',
-  abroad:     '해외 진학',
+  science:    'Science & Engineering',
+  medical:    'Medical / Pharmacy',
+  humanities: 'Humanities / Social Sciences',
+  arts:       'Arts & Performance',
+  business:   'Business & Economics',
+  abroad:     'Study Abroad',
 };
 
 const TRACK_CAPS = {
-  science:    ['고등 수학', '물리/화학', '코딩 기초', '수능 준비', '이공계 포트폴리오'],
-  medical:    ['생명과학', '유기화학', '수능 최상위', '면접 준비', '봉사/연구 경험'],
-  humanities: ['비문학 독해', '사탐 심화', '논술 작성', '수능 국어', '영어 독해'],
-  arts:       ['실기 완성도', '포트폴리오', '예술사 이론', '영어', '대입 면접'],
-  business:   ['수리 통계', '경제학 기초', '영어 에세이', '수능 사탐', '논리적 글쓰기'],
-  abroad:     ['SAT/ACT', 'Advanced Math', '프로그래밍', '리서치 프로젝트', '에세이 & 추천서'],
+  science:    ['Advanced Math', 'Physics/Chemistry', 'Coding Basics', 'Exam Prep', 'Engineering Portfolio'],
+  medical:    ['Biology', 'Organic Chemistry', 'High-Level Exam Prep', 'Interview Prep', 'Research Experience'],
+  humanities: ['Reading Comprehension', 'Social Studies Deep Dive', 'Essay Writing', 'Language Skills', 'Critical Thinking'],
+  arts:       ['Skill Development', 'Portfolio', 'Art Theory', 'English', 'Audition Prep'],
+  business:   ['Math & Statistics', 'Economics Fundamentals', 'English Essay', 'Social Studies', 'Business Writing'],
+  abroad:     ['SAT/ACT', 'Advanced Math', 'Programming', 'Research Project', 'Essay & Recommendations'],
 };
 
 const TRACK_MILESTONES = {
-  science:    [['기초 점검 & 계획 수립','완료'],['수학 심화 과정','진행 중'],['물리/화학 실력 강화','예정'],['수능/입시 모의고사','예정'],['최종 지원 & 면접','예정']],
-  medical:    [['기초 점검 & 계획 수립','완료'],['생명과학 심화','진행 중'],['화학 집중 학습','예정'],['수능 모의고사 & 피드백','예정'],['의대 지원 & 면접','예정']],
-  humanities: [['기초 점검 & 계획 수립','완료'],['국어 비문학 집중','진행 중'],['사탐 전 과목 정리','예정'],['논술 실전 연습','예정'],['수능 & 대입 지원','예정']],
-  arts:       [['기초 점검 & 계획 수립','완료'],['실기 기본기 강화','진행 중'],['포트폴리오 제작','예정'],['실기 시험 준비','예정'],['대입 실기 & 면접','예정']],
-  business:   [['기초 점검 & 계획 수립','완료'],['수리/통계 강화','진행 중'],['경제학 원론 완성','예정'],['영어 에세이 작성','예정'],['대입 지원 & 면접','예정']],
-  abroad:     [['기초 점검 & 계획 수립','완료'],['SAT 기초 완성','진행 중'],['리서치 프로젝트 착수','예정'],['SAT 목표 점수 달성','예정'],['대학 지원 & 에세이','예정']],
+  science:    [['Foundation Check & Plan', 'Complete'], ['Advanced Math Course', 'In Progress'], ['Physics/Chemistry Mastery', 'Planned'], ['Mock Exams & Review', 'Planned'], ['Final Applications & Interviews', 'Planned']],
+  medical:    [['Foundation Check & Plan', 'Complete'], ['Biology Deep Dive', 'In Progress'], ['Chemistry Intensive', 'Planned'], ['Exam Simulations & Feedback', 'Planned'], ['Medical School Applications & Interviews', 'Planned']],
+  humanities: [['Foundation Check & Plan', 'Complete'], ['Language Reading Focus', 'In Progress'], ['Social Studies Review', 'Planned'], ['Essay Practice', 'Planned'], ['College Exams & Applications', 'Planned']],
+  arts:       [['Foundation Check & Plan', 'Complete'], ['Portfolio Skill Building', 'In Progress'], ['Portfolio Creation', 'Planned'], ['Audition Prep', 'Planned'], ['Performance Applications & Interviews', 'Planned']],
+  business:   [['Foundation Check & Plan', 'Complete'], ['Math/Statistics Strengthening', 'In Progress'], ['Economics Mastery', 'Planned'], ['English Essay Writing', 'Planned'], ['Business Applications & Interviews', 'Planned']],
+  abroad:     [['Foundation Check & Plan', 'Complete'], ['SAT Basics', 'In Progress'], ['Research Project Start', 'Planned'], ['Target Score Achievement', 'Planned'], ['University Applications & Essays', 'Planned']],
 };
 
 const TRACK_BARS = {
-  science:    [['수학','#185FA5'],['물리/화학','#1D9E75'],['영어','#EF9F27'],['포트폴리오','#D4537E']],
-  medical:    [['생명과학','#185FA5'],['화학','#1D9E75'],['수능 국어','#EF9F27'],['면접 준비','#D4537E']],
-  humanities: [['국어','#185FA5'],['사탐','#1D9E75'],['영어','#EF9F27'],['논술','#D4537E']],
-  arts:       [['실기','#185FA5'],['포트폴리오','#1D9E75'],['이론','#EF9F27'],['영어','#D4537E']],
-  business:   [['수학/통계','#185FA5'],['경제학','#1D9E75'],['영어','#EF9F27'],['논술','#D4537E']],
-  abroad:     [['수학','#185FA5'],['SAT 영어','#1D9E75'],['코딩','#EF9F27'],['포트폴리오','#D4537E']],
+  science:    [['Math', '#185FA5'], ['Physics/Chemistry', '#1D9E75'], ['English', '#EF9F27'], ['Portfolio', '#D4537E']],
+  medical:    [['Biology', '#185FA5'], ['Chemistry', '#1D9E75'], ['Language Arts', '#EF9F27'], ['Interview Prep', '#D4537E']],
+  humanities: [['Language Arts', '#185FA5'], ['Social Studies', '#1D9E75'], ['English', '#EF9F27'], ['Essay Writing', '#D4537E']],
+  arts:       [['Practical Skill', '#185FA5'], ['Portfolio', '#1D9E75'], ['Theory', '#EF9F27'], ['English', '#D4537E']],
+  business:   [['Math/Statistics', '#185FA5'], ['Economics', '#1D9E75'], ['English', '#EF9F27'], ['Essay Writing', '#D4537E']],
+  abroad:     [['Math', '#185FA5'], ['SAT English', '#1D9E75'], ['Coding', '#EF9F27'], ['Portfolio', '#D4537E']],
 };
 
 const TRACK_TASKS = {
-  science:    [{n:'수학 심화 문제 30문항',d:'2시간',s:'s-math'},{n:'물리 개념 정리',d:'1시간',s:'s-sci'},{n:'수능 기출 분석',d:'45분',s:'s-kor'},{n:'영어 단어 암기',d:'30분',s:'s-eng'}],
-  medical:    [{n:'생명과학 단원 정리',d:'2시간',s:'s-sci'},{n:'유기화학 반응식 연습',d:'1.5시간',s:'s-sci'},{n:'수능 국어 비문학',d:'1시간',s:'s-kor'},{n:'의학 영어 읽기',d:'30분',s:'s-eng'}],
-  humanities: [{n:'비문학 독해 5지문',d:'1시간',s:'s-kor'},{n:'사탐 개념 정리',d:'1.5시간',s:'s-soc'},{n:'논술 한 편 작성',d:'2시간',s:'s-kor'},{n:'영어 독해 연습',d:'30분',s:'s-eng'}],
-  arts:       [{n:'실기 기본기 연습',d:'2시간',s:'s-math'},{n:'포트폴리오 작업',d:'1.5시간',s:'s-cs'},{n:'예술사 이론 정리',d:'1시간',s:'s-soc'},{n:'영어 회화 연습',d:'30분',s:'s-eng'}],
-  business:   [{n:'미적분/통계 문제',d:'1.5시간',s:'s-math'},{n:'경제학 개념 정리',d:'1시간',s:'s-soc'},{n:'영어 에세이 작성',d:'1시간',s:'s-eng'},{n:'시사 뉴스 요약',d:'30분',s:'s-soc'}],
-  abroad:     [{n:'SAT Math 30문항',d:'2시간',s:'s-math'},{n:'SAT 영어 독해',d:'1시간',s:'s-sat'},{n:'코딩 프로젝트 작업',d:'1.5시간',s:'s-cs'},{n:'에세이 초안 작성',d:'1시간',s:'s-eng'}],
+  science:    [{n:'Solve 30 advanced math problems', d:'2 hours', s:'s-math'}, {n:'Review physics concepts', d:'1 hour', s:'s-sci'}, {n:'Analyze past exam questions', d:'45 min', s:'s-kor'}, {n:'Memorize English vocabulary', d:'30 min', s:'s-eng'}],
+  medical:    [{n:'Organize biology units', d:'2 hours', s:'s-sci'}, {n:'Practice organic chemistry reactions', d:'1.5 hours', s:'s-sci'}, {n:'Read advanced Korean passages', d:'1 hour', s:'s-kor'}, {n:'Study medical English articles', d:'30 min', s:'s-eng'}],
+  humanities: [{n:'Read 5 critical passages', d:'1 hour', s:'s-kor'}, {n:'Review social studies concepts', d:'1.5 hours', s:'s-soc'}, {n:'Write one essay', d:'2 hours', s:'s-kor'}, {n:'Practice English reading', d:'30 min', s:'s-eng'}],
+  arts:       [{n:'Practice fundamentals', d:'2 hours', s:'s-math'}, {n:'Work on portfolio', d:'1.5 hours', s:'s-cs'}, {n:'Study art theory', d:'1 hour', s:'s-soc'}, {n:'Practice English conversation', d:'30 min', s:'s-eng'}],
+  business:   [{n:'Solve calculus/statistics problems', d:'1.5 hours', s:'s-math'}, {n:'Review economics concepts', d:'1 hour', s:'s-soc'}, {n:'Write an English essay', d:'1 hour', s:'s-eng'}, {n:'Summarize current affairs', d:'30 min', s:'s-soc'}],
+  abroad:     [{n:'Solve SAT Math problems', d:'2 hours', s:'s-math'}, {n:'Practice SAT English reading', d:'1 hour', s:'s-sat'}, {n:'Work on coding project', d:'1.5 hours', s:'s-cs'}, {n:'Draft an application essay', d:'1 hour', s:'s-eng'}],
 };
 
 const TRACK_PRESETS = {
-  science:    ['카이스트 전자공학', 'POSTECH 컴퓨터공학', '서울대 공과대학', '삼성전자 연구원'],
-  medical:    ['서울대 의과대학', '연세대 의대', '고려대 의대', '약학대학 진학'],
-  humanities: ['서울대 법학전문대학원', '한국외대 국제학부', '연세대 사회과학대학', '외교관 시험 합격'],
-  arts:       ['홍익대 미술대학', '한예종 입학', 'K-POP 아티스트 데뷔', '국립발레단 입단'],
-  business:   ['서울대 경영대학', '고려대 경영학과', 'CFA 취득', '대기업 경영직 입사'],
-  abroad:     ['Stanford University CS', 'MIT Engineering', 'Harvard Business School', 'Oxford / Cambridge'],
+  science:    ['KAIST Electrical Engineering', 'POSTECH Computer Engineering', 'Seoul National University Engineering', 'Samsung Research'],
+  medical:    ['Seoul National University Medicine', 'Yonsei University Medical School', 'Korea University Medical School', 'Pharmacy School Admission'],
+  humanities: ['Seoul National University Law', 'HUFS International Studies', 'Yonsei Social Sciences', 'Diplomatic Service Exam'],
+  arts:       ['Hongik University Art', 'K-Arts Admission', 'K-POP Artist Debut', 'National Ballet Troupe'],
+  business:   ['Seoul National University Business', 'Korea University Business', 'CFA Certification', 'Corporate Management Job'],
+  abroad:     ['Stanford CS', 'MIT Engineering', 'Harvard Business School', 'Oxford / Cambridge'],
 };
 
 const TRACK_SUBJECTS = {
-  science:    ['수학', '물리', '화학', '영어', '정보/코딩'],
-  medical:    ['수학', '생명과학', '화학', '영어', '국어'],
-  humanities: ['국어', '사회', '역사', '영어', '논술'],
-  arts:       ['전공 실기', '국어', '영어', '예술사/이론', '포트폴리오'],
-  business:   ['수학', '경제', '영어', '사회', '논술'],
-  abroad:     ['수학', '영어(SAT)', '코딩', '과학', '에세이'],
+  science:    ['Math', 'Physics', 'Chemistry', 'English', 'Computer Science'],
+  medical:    ['Math', 'Biology', 'Chemistry', 'English', 'Korean'],
+  humanities: ['Korean', 'Social Studies', 'History', 'English', 'Essay Writing'],
+  arts:       ['Major Skills', 'Korean', 'English', 'Art Theory', 'Portfolio'],
+  business:   ['Math', 'Economics', 'English', 'Social Studies', 'Essay Writing'],
+  abroad:     ['Math', 'SAT English', 'Coding', 'Science', 'Essay'],
 };
 
 const TASK_SUBJECT_LIST  = ['s-math','s-cs','s-sat','s-sci','s-eng','s-kor','s-soc'];
-const TASK_SUBJECT_NAMES = ['Math','CS','SAT','Science','English','국어','사회'];
+const TASK_SUBJECT_NAMES = ['Math','CS','SAT','Science','English','Korean','Social Studies'];

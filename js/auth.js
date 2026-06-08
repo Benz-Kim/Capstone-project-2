@@ -43,12 +43,12 @@ function checkPw() {
   const bar  = document.getElementById('pwbar');
   const hint = document.getElementById('pwhint');
   const cols = ['#E24B4A', '#EF9F27', '#1D9E75'];
-  const lbs  = ['약함', '보통', '강함'];
+  const lbs  = ['Weak', 'Fair', 'Strong'];
 
   if (!pw.length) { bar.style.width = '0'; hint.textContent = ''; return; }
   bar.style.width      = (score * 33) + '%';
   bar.style.background = cols[score - 1] || cols[0];
-  hint.textContent     = lbs[score - 1]  || '약함';
+  hint.textContent     = lbs[score - 1]  || 'Weak';
   hint.style.color     = cols[score - 1] || cols[0];
 }
 
@@ -74,7 +74,7 @@ function doRegister() {
 
   if (users.find(u => u.id === id)) {
     showErr('e-id', true);
-    document.getElementById('e-id').textContent = '이미 사용 중인 ID예요.';
+    document.getElementById('e-id').textContent = 'This ID is already in use.';
     return;
   }
 
@@ -85,7 +85,7 @@ function doRegister() {
 
   session = user;
   localStorage.setItem('afp_sess', JSON.stringify(user));
-  toast('계정이 생성됐어요! 환영합니다 🎉');
+  toast('Account created! Welcome 🎉');
   setTimeout(() => go('s-ob1'), 700);
 }
 
@@ -95,5 +95,5 @@ function doLogout() {
   session = null;
   resetObData();
   go('s-login');
-  toast('로그아웃 됐어요.');
+  toast('Logged out successfully.');
 }

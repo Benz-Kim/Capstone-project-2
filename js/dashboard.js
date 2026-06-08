@@ -4,17 +4,17 @@
    ═══════════════════════════════════ */
 
 const CHAT_REPLIES = [
-  '네! 오늘 어려운 부분은 내일로 미루고 집중할 과목을 먼저 해결해요. 💪',
-  '현재 진행 상황을 보면 잘 하고 계세요! 이 속도라면 목표 달성 충분해요.',
-  '하루 빠지는 건 괜찮아요. 빠진 분량은 3일에 걸쳐 나눠서 채울게요.',
-  '가장 약한 부분에 집중하는 게 가장 빠른 성장 방법이에요!',
-  '목표까지 꾸준히 가는 게 중요해요. 오늘도 한 걸음씩 나아가봐요 🎯',
+  'Yes! Focus on the hardest part today and keep your momentum going. 💪',
+  'You are doing well so far! This pace is strong enough to reach your goal.',
+  'It’s okay to take a break for a day. We’ll redistribute the missed work over the next three days.',
+  'Focusing on your weakest area is the fastest way to improve!',
+  'Consistency is key. Take one step towards your goal today. 🎯',
 ];
 let chatIndex = 0;
 
 /* ── Build the entire dashboard from user + obData ── */
 function buildDashboard(user) {
-  const ob    = (user && user.obData) || { track:'abroad', goal:'My Goal', year:2027, sem:'하반기', level:{}, hours:'3~4시간' };
+  const ob    = (user && user.obData) || { track:'abroad', goal:'My Goal', year:2027, sem:'Second half', level:{}, hours:'3-4 hours' };
   let   track = ob.track || 'abroad';
 
   // Safety guard — fall back to 'abroad' if track key is missing
@@ -37,31 +37,31 @@ function buildDashboard(user) {
 
   // ── Goal card ──
   document.getElementById('d-goal-title').textContent = ob.goal || 'My Goal';
-  document.getElementById('d-goal-sub').textContent   = `${TRACK_NAMES[track]} · ${ob.year || 2027}년 ${ob.sem || '하반기'}`;
+  document.getElementById('d-goal-sub').textContent   = `${TRACK_NAMES[track]} · ${ob.year || 2027} ${ob.sem || 'Second half'}`;
 
   document.getElementById('d-caps').innerHTML = TRACK_CAPS[track]
     .map(c => `<span class="gtag">${c}</span>`)
     .join('');
 
-  const targetDate = new Date(ob.year || 2027, ob.sem === '상반기' ? 5 : 11, 1);
+  const targetDate = new Date(ob.year || 2027, ob.sem === 'First half' ? 5 : 11, 1);
   const monthsLeft = Math.max(1, Math.round((targetDate - now) / (1000 * 60 * 60 * 24 * 30)));
   document.getElementById('d-stats').innerHTML = `
-    <div class="gstat"><div class="gstat-val">${monthsLeft}개월</div><div class="gstat-lbl">남은 기간</div></div>
-    <div class="gstat"><div class="gstat-val">5%</div><div class="gstat-lbl">전체 진행률</div></div>
-    <div class="gstat"><div class="gstat-val">${ob.year || 2027}</div><div class="gstat-lbl">목표 연도</div></div>`;
+    <div class="gstat"><div class="gstat-val">${monthsLeft} months</div><div class="gstat-lbl">Time left</div></div>
+    <div class="gstat"><div class="gstat-val">5%</div><div class="gstat-lbl">Overall progress</div></div>
+    <div class="gstat"><div class="gstat-val">${ob.year || 2027}</div><div class="gstat-lbl">Target year</div></div>`;
 
   // ── Stepping stones ──
   const ms = TRACK_MILESTONES[track];
   let stHTML = '';
   ms.forEach((m, i) => {
-    const state = m[1] === '완료' ? 'dn' : m[1] === '진행 중' ? 'ac' : 'ft';
+    const state = m[1] === 'Complete' ? 'dn' : m[1] === 'In Progress' ? 'ac' : 'ft';
     if (i > 0) {
-      const prevState = ms[i-1][1] === '완료' ? 'dn' : ms[i-1][1] === '진행 중' ? 'ac' : 'ft';
+      const prevState = ms[i-1][1] === 'Complete' ? 'dn' : ms[i-1][1] === 'In Progress' ? 'ac' : 'ft';
       stHTML += `<div class="sline ${prevState}"></div>`;
     }
     stHTML += `<div class="stone"><div class="scircle ${state}">${state === 'dn' ? CHECK_SVG : i + 1}</div><div class="slabel">${m[0]}</div></div>`;
   });
-  stHTML += `<div class="sline ft"></div><div class="stone"><div class="scircle ft" style="background:#FAEEDA;border-color:#EF9F27;color:#633806;font-size:15px;">🎓</div><div class="slabel">최종 목표</div></div>`;
+  stHTML += `<div class="sline ft"></div><div class="stone"><div class="scircle ft" style="background:#FAEEDA;border-color:#EF9F27;color:#633806;font-size:15px;">🎓</div><div class="slabel">Final goal</div></div>`;
   document.getElementById('d-stones').innerHTML = stHTML;
 
   // ── Milestone progress bars ──
@@ -87,7 +87,7 @@ function buildDashboard(user) {
     const done  = i < 1;
     const sname = t.s.replace('s-','').replace('math','Math').replace('cs','CS')
                     .replace('sat','SAT').replace('sci','Science').replace('eng','English')
-                    .replace('kor','국어').replace('soc','사회');
+                    .replace('kor','Korean').replace('soc','Social Studies');
     return `
       <div class="task-row${done ? ' dn' : ''}" onclick="toggleTask(this)">
         <div class="chk${done ? ' dn' : ''}">${done ? CHECK_SVG : ''}</div>
@@ -101,7 +101,7 @@ function buildDashboard(user) {
   updateSummary();
 
   // ── AI chat greeting ──
-  document.getElementById('chat-prev').textContent = `${firstName}님의 목표 분석이 완료됐어요! 오늘 첫 번째 학습을 시작해볼까요? 💪`;
+  document.getElementById('chat-prev').textContent = `${firstName}, your goal analysis is ready! Shall we start your first study session today? 💪`;
 }
 
 /* ── Goal card expand/collapse ── */
@@ -162,7 +162,7 @@ function sendChat() {
   const inp = document.getElementById('chat-in');
   if (!inp.value.trim()) return;
   inp.value = '';
-  document.getElementById('chat-prev').textContent = '생각 중...';
+  document.getElementById('chat-prev').textContent = 'Thinking...';
   setTimeout(() => {
     document.getElementById('chat-prev').textContent = CHAT_REPLIES[chatIndex % CHAT_REPLIES.length];
     chatIndex++;
