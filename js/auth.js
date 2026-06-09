@@ -7,6 +7,99 @@
 let users   = JSON.parse(localStorage.getItem('afp_users') || '[]');
 let session = null;  // populated by main.js after data is ready
 let selGender = '';
+let googleTokenClient = null;
+
+const SOCIAL_AUTH = {
+  googleClientId: '999502593757-qhl0jkggg01k56bb0nlsmbbu06ehslvr.apps.googleusercontent.com',
+};
+
+function socialAuthReady() {
+  return location.protocol !== 'file:' && !!SOCIAL_AUTH.googleClientId;
+}
+
+function providerLoginHint(provider) {
+  if (location.protocol === 'file:') {
+    toast(`${provider} login needs the app to run from http://localhost or a hosted domain.`);
+    return true;
+  }
+  return false;
+}
+
+function providerUserId(provider, value) {
+  return `${provider.toLowerCase()}_${value}`;
+}
+
+function decodeJwt(token) {
+  const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+  const json = decodeURIComponent(atob(payload).split('').map(char => `%${('00' + char.charCodeAt(0).toString(16)).slice(-2)}`).join(''));
+  return JSON.parse(json);
+}
+
+function upsertSocialSession(provider, providerId, name, email, picture) {
+  const id = providerUserId(provider, providerId);
+  let user = users.find(u => u.id === id || (u.provider === provider && u.providerId === providerId));
+
+  if (!user) {
+    const initials = (name || provider).split(' ').map(word => word[0]).join('').slice(0, 2).toUpperCase();
+    user = {
+      name: name || `${provider} User`,
+      id,
+      pw: '',
+      email: email || '',
+      provider,
+      providerId,
+      picture: picture || '',
+      initials,
+      onboarded: false,
+    };
+    users.push(user);
+  } else {
+    user.name = name || user.name || `${provider} User`;
+    user.email = email || user.email || '';
+    user.picture = picture || user.picture || '';
+    user.provider = provider;
+    user.providerId = providerId;
+    user.initials = (user.name || provider).split(' ').map(word => word[0]).join('').slice(0, 2).toUpperCase();
+  }
+
+  localStorage.setItem('afp_users', JSON.stringify(users));
+  session = user;
+  localStorage.setItem('afp_sess', JSON.stringify(user));
+  return user;
+}
+
+function initGoogleAuth() {
+  if (!window.google?.accounts?.oauth2 || !SOCIAL_AUTH.googleClientId) return;
+  googleTokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: SOCIAL_AUTH.googleClientId,
+    scope: 'openid profile email',
+    callback: handleGoogleToken,
+  });
+}
+
+async function handleGoogleToken(response) {
+  if (response.error) {
+    toast('Google sign-in was cancelled or failed.');
+    return;
+  }
+
+  try {
+    const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: `Bearer ${response.access_token}` },
+    });
+    if (!res.ok) throw new Error('Unable to read Google profile.');
+    const profile = await res.json();
+    const user = upsertSocialSession('Google', profile.sub, profile.name || 'Google User', profile.email || '', profile.picture || '');
+    toast('Signed in with Google.');
+    user.onboarded ? (buildDashboard(user), go('s-dashboard')) : go('s-ob1');
+  } catch (error) {
+    toast('Google sign-in failed.');
+  }
+}
+
+function initSocialProviders() {
+  initGoogleAuth();
+}
 
 /* ── Login ── */
 function doLogin() {
@@ -21,9 +114,17 @@ function doLogin() {
   user.onboarded ? (buildDashboard(user), go('s-dashboard')) : go('s-ob1');
 }
 
-function socialLogin(provider) {
-  session = { name: provider + ' User', id: provider.toLowerCase() + '_user', initials: provider[0] + 'U', onboarded: false };
-  go('s-ob1');
+async function socialLogin(provider) {
+  if (providerLoginHint(provider)) return;
+
+  if (provider === 'Google') {
+    if (!googleTokenClient) {
+      toast('Google login is not configured yet.');
+      return;
+    }
+    googleTokenClient.requestAccessToken({ prompt: 'select_account' });
+    return;
+  }
 }
 
 /* ── Register ── */
@@ -97,3 +198,5 @@ function doLogout() {
   go('s-login');
   toast('Logged out successfully.');
 }
+
+window.addEventListener('load', initSocialProviders);
