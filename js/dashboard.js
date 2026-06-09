@@ -91,7 +91,7 @@ function buildDashboard(user) {
     const done  = i < 1;
     const sname = t.s.replace('s-','').replace('math','Math').replace('cs','CS')
                     .replace('sat','SAT').replace('sci','Science').replace('eng','English')
-                    .replace('kor','Korean').replace('soc','Social Studies');
+                    .replace('lang','Language Arts').replace('soc','Social Studies');
     return `
       <div class="task-row${done ? ' dn' : ''}">
         <div class="chk${done ? ' dn' : ''}" onclick="toggleTask(this.parentElement)">${done ? CHECK_SVG : ''}</div>
