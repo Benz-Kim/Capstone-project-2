@@ -52,31 +52,31 @@ const TRACK_BARS = {
 };
 
 const TRACK_TASKS = {
-  science:    [{n:'Solve 30 advanced math problems', d:'2 hours', s:'s-math'}, {n:'Review physics concepts', d:'1 hour', s:'s-sci'}, {n:'Analyze past exam questions', d:'45 min', s:'s-kor'}, {n:'Memorize English vocabulary', d:'30 min', s:'s-eng'}],
-  medical:    [{n:'Organize biology units', d:'2 hours', s:'s-sci'}, {n:'Practice organic chemistry reactions', d:'1.5 hours', s:'s-sci'}, {n:'Read advanced Korean passages', d:'1 hour', s:'s-kor'}, {n:'Study medical English articles', d:'30 min', s:'s-eng'}],
-  humanities: [{n:'Read 5 critical passages', d:'1 hour', s:'s-kor'}, {n:'Review social studies concepts', d:'1.5 hours', s:'s-soc'}, {n:'Write one essay', d:'2 hours', s:'s-kor'}, {n:'Practice English reading', d:'30 min', s:'s-eng'}],
+  science:    [{n:'Solve 30 advanced math problems', d:'2 hours', s:'s-math'}, {n:'Review physics concepts', d:'1 hour', s:'s-sci'}, {n:'Analyze AP exam questions', d:'45 min', s:'s-lang'}, {n:'Memorize English vocabulary', d:'30 min', s:'s-eng'}],
+  medical:    [{n:'Organize biology units', d:'2 hours', s:'s-sci'}, {n:'Practice organic chemistry reactions', d:'1.5 hours', s:'s-sci'}, {n:'Read advanced passage analysis', d:'1 hour', s:'s-lang'}, {n:'Study medical English articles', d:'30 min', s:'s-eng'}],
+  humanities: [{n:'Read 5 critical passages', d:'1 hour', s:'s-lang'}, {n:'Review social studies concepts', d:'1.5 hours', s:'s-soc'}, {n:'Write one essay', d:'2 hours', s:'s-lang'}, {n:'Practice English reading', d:'30 min', s:'s-eng'}],
   arts:       [{n:'Practice fundamentals', d:'2 hours', s:'s-math'}, {n:'Work on portfolio', d:'1.5 hours', s:'s-cs'}, {n:'Study art theory', d:'1 hour', s:'s-soc'}, {n:'Practice English conversation', d:'30 min', s:'s-eng'}],
   business:   [{n:'Solve calculus/statistics problems', d:'1.5 hours', s:'s-math'}, {n:'Review economics concepts', d:'1 hour', s:'s-soc'}, {n:'Write an English essay', d:'1 hour', s:'s-eng'}, {n:'Summarize current affairs', d:'30 min', s:'s-soc'}],
   abroad:     [{n:'Solve SAT Math problems', d:'2 hours', s:'s-math'}, {n:'Practice SAT English reading', d:'1 hour', s:'s-sat'}, {n:'Work on coding project', d:'1.5 hours', s:'s-cs'}, {n:'Draft an application essay', d:'1 hour', s:'s-eng'}],
 };
 
 const TRACK_PRESETS = {
-  science:    ['KAIST Electrical Engineering', 'POSTECH Computer Engineering', 'Seoul National University Engineering', 'Samsung Research'],
-  medical:    ['Seoul National University Medicine', 'Yonsei University Medical School', 'Korea University Medical School', 'Pharmacy School Admission'],
-  humanities: ['Seoul National University Law', 'HUFS International Studies', 'Yonsei Social Sciences', 'Diplomatic Service Exam'],
-  arts:       ['Hongik University Art', 'K-Arts Admission', 'K-POP Artist Debut', 'National Ballet Troupe'],
-  business:   ['Seoul National University Business', 'Korea University Business', 'CFA Certification', 'Corporate Management Job'],
-  abroad:     ['Stanford CS', 'MIT Engineering', 'Harvard Business School', 'Oxford / Cambridge'],
+  science:    ['MIT Electrical Engineering', 'Stanford Computer Engineering', 'Georgia Tech Robotics', 'NASA Research Internship'],
+  medical:    ['Harvard Medical School', 'Johns Hopkins Medicine', 'UCSF Medical School', 'Pre-Med Research'],
+  humanities: ['Harvard Law School', 'Georgetown International Affairs', 'Columbia Social Sciences', 'U.S. Foreign Service'],
+  arts:       ['Juilliard Acting', 'NYU Tisch Film', 'RISD Illustration', 'Broadway Performance'],
+  business:   ['Wharton Business', 'MIT Sloan Management', 'UC Berkeley Haas', 'Wall Street Finance'],
+  abroad:     ['Stanford CS', 'MIT Engineering', 'Harvard Business School', 'UC Berkeley'],
 };
 
 const TRACK_SUBJECTS = {
   science:    ['Math', 'Physics', 'Chemistry', 'English', 'Computer Science'],
-  medical:    ['Math', 'Biology', 'Chemistry', 'English', 'Korean'],
-  humanities: ['Korean', 'Social Studies', 'History', 'English', 'Essay Writing'],
-  arts:       ['Major Skills', 'Korean', 'English', 'Art Theory', 'Portfolio'],
+  medical:    ['Math', 'Biology', 'Chemistry', 'English', 'Language Arts'],
+  humanities: ['Language Arts', 'Social Studies', 'History', 'English', 'Essay Writing'],
+  arts:       ['Major Skills', 'Language Arts', 'English', 'Art Theory', 'Portfolio'],
   business:   ['Math', 'Economics', 'English', 'Social Studies', 'Essay Writing'],
   abroad:     ['Math', 'SAT English', 'Coding', 'Science', 'Essay'],
 };
 
-const TASK_SUBJECT_LIST  = ['s-math','s-cs','s-sat','s-sci','s-eng','s-kor','s-soc'];
-const TASK_SUBJECT_NAMES = ['Math','CS','SAT','Science','English','Korean','Social Studies'];
+const TASK_SUBJECT_LIST  = ['s-math','s-cs','s-sat','s-sci','s-eng','s-lang','s-soc'];
+const TASK_SUBJECT_NAMES = ['Math','CS','SAT','Science','English','Language Arts','Social Studies'];
