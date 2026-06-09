@@ -467,6 +467,18 @@ body {
 .s-kor  { background: #FEF2F2; color: #7F1D1D; }
 .s-soc  { background: #F0FDF4; color: #14532D; }
 
+.task-delete {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: none; background: transparent; color: var(--t3);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all .15s;
+  opacity: 0;
+}
+.task-row:hover .task-delete { opacity: 1; }
+.task-delete:hover { background: #FEE2E2; color: #DC2626; }
+.task-delete:active { transform: scale(0.95); }
+.task-row.dn .task-delete { opacity: .5; }
+
 .addarea { display: none; border-top: .5px solid var(--b1); padding-top: 10px; margin-top: 4px; gap: 8px; align-items: center; }
 .addarea.open { display: flex; }
 .addarea input {
