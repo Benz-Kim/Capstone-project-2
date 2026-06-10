@@ -307,7 +307,7 @@
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
           <span class="ndot"></span>
         </span>
-        <span class="ni">
+        <span class="ni" onclick="openSettings()">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         </span>
         <span class="ni" onclick="doLogout()">
@@ -395,6 +395,96 @@
       </div>
     </div>
   </div><!-- /s-dashboard -->
+
+  <!-- ══════════ SETTINGS MODAL ══════════ -->
+  <div class="modal-overlay" id="settings-modal-overlay" onclick="closeSettings(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title">Settings</div>
+        <button class="modal-close" onclick="closeSettings()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Grade -->
+        <div class="setting-section">
+          <label class="setting-label">Grade / Level</label>
+          <select class="setting-input" id="set-grade">
+            <option value="">Select Grade</option>
+            <option value="middle1">G7</option>
+            <option value="middle2">G8</option>
+            <option value="middle3">G9</option>
+            <option value="high1">G10</option>
+            <option value="high2">G11</option>
+            <option value="high3">G12</option>
+            <option value="univ">College / Other</option>
+          </select>
+        </div>
+
+        <!-- Academic Track -->
+        <div class="setting-section">
+          <label class="setting-label">Academic Track</label>
+          <select class="setting-input" id="set-track" onchange="onSettingsTrackChange()">
+            <option value="">Select Track</option>
+            <option value="science">Science & Engineering</option>
+            <option value="medical">Medical / Pharmacy</option>
+            <option value="humanities">Humanities / Social Sciences</option>
+            <option value="arts">Arts & Performance</option>
+            <option value="business">Business & Economics</option>
+            <option value="abroad">Study Abroad</option>
+          </select>
+        </div>
+
+        <!-- Final Goal -->
+        <div class="setting-section">
+          <label class="setting-label">Final Goal</label>
+          <input type="text" class="setting-input" id="set-goal" placeholder="e.g. Admission to MIT CS" />
+        </div>
+
+        <!-- Target Year -->
+        <div class="setting-section">
+          <label class="setting-label">Target Year</label>
+          <select class="setting-input" id="set-year">
+            <option value="">Select Year</option>
+          </select>
+        </div>
+
+        <!-- Target Period -->
+        <div class="setting-section">
+          <label class="setting-label">Target Period</label>
+          <select class="setting-input" id="set-sem">
+            <option value="">Select Period</option>
+            <option value="First half">First half (Jan–Jun)</option>
+            <option value="Second half">Second half (Jul–Dec)</option>
+          </select>
+        </div>
+
+        <!-- Daily Study Hours -->
+        <div class="setting-section">
+          <label class="setting-label">Daily Study Hours</label>
+          <select class="setting-input" id="set-hours">
+            <option value="">Select Hours</option>
+            <option value="1-2 hours">1-2 hours</option>
+            <option value="3-4 hours">3-4 hours</option>
+            <option value="5-6 hours">5-6 hours</option>
+            <option value="7+ hours">7+ hours</option>
+          </select>
+        </div>
+
+        <!-- Subject Levels -->
+        <div class="setting-section">
+          <label class="setting-label">Subject Levels</label>
+          <div id="set-levels"></div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeSettings()">Cancel</button>
+        <button class="btn-save" onclick="saveSettings()">Save Changes</button>
+      </div>
+    </div>
+  </div><!-- /settings-modal -->
 
 </div><!-- /shell -->
 

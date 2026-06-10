@@ -186,3 +186,149 @@ function sendChat() {
     chatIndex++;
   }, 700);
 }
+
+/* ══════════════════════════════════
+   SETTINGS MODAL FUNCTIONS
+   ═════════════════════════════════ */
+
+/* ── Open settings modal ── */
+function openSettings() {
+  const overlay = document.getElementById('settings-modal-overlay');
+  overlay.classList.add('open');
+  
+  // Populate settings with current data
+  const ob = (session && session.obData) || {};
+  
+  // Set values from session
+  document.getElementById('set-grade').value = ob.grade || '';
+  document.getElementById('set-track').value = ob.track || 'abroad';
+  document.getElementById('set-goal').value = ob.goal || '';
+  document.getElementById('set-year').value = ob.year || '';
+  document.getElementById('set-sem').value = ob.sem || '';
+  document.getElementById('set-hours').value = ob.hours || '';
+  
+  // Build years dropdown
+  const yearSelect = document.getElementById('set-year');
+  const now = new Date().getFullYear();
+  yearSelect.innerHTML = '<option value="">Select Year</option>';
+  for (let y = now; y <= now + 5; y++) {
+    const opt = document.createElement('option');
+    opt.value = y;
+    opt.textContent = y;
+    yearSelect.appendChild(opt);
+  }
+  if (ob.year) yearSelect.value = ob.year;
+  
+  // Build subject levels
+  buildSettingLevels();
+}
+
+/* ── Close settings modal ── */
+function closeSettings(event) {
+  // If clicked on overlay background (not modal content), close
+  if (event && event.target !== document.getElementById('settings-modal-overlay')) return;
+  const overlay = document.getElementById('settings-modal-overlay');
+  overlay.classList.remove('open');
+}
+
+/* ── Build subject level sliders ── */
+function buildSettingLevels() {
+  const ob = (session && session.obData) || {};
+  const track = document.getElementById('set-track').value || ob.track || 'abroad';
+  const subjects = TRACK_SUBJECTS[track] || TRACK_SUBJECTS['abroad'];
+  const container = document.getElementById('set-levels');
+  
+  let html = '';
+  subjects.forEach(subj => {
+    const curLevel = (ob.level && ob.level[subj]) || 3;
+    html += `
+      <div class="level-setting-item">
+        <div class="level-setting-row">
+          <span class="level-setting-subj">${subj}</span>
+          <span class="level-setting-val" id="slv-${subj}">${LVL_LABELS[curLevel - 1]}</span>
+        </div>
+        <div class="level-setting-btns">
+          ${[1,2,3,4,5].map(n =>
+            `<button class="level-setting-btn${curLevel === n ? ' sel' : ''}" data-subj="${subj}" data-n="${n}" onclick="setSLevel(this)">${LVL_LABELS[n - 1].charAt(0)}</button>`
+          ).join('')}
+        </div>
+      </div>`;
+  });
+  container.innerHTML = html;
+}
+
+/* ── Set subject level in settings ── */
+function setSLevel(btn) {
+  const subj = btn.dataset.subj;
+  const n = parseInt(btn.dataset.n);
+  
+  // Update button selection
+  btn.closest('.level-setting-btns').querySelectorAll('.level-setting-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  
+  // Update value display
+  document.getElementById('slv-' + subj).textContent = LVL_LABELS[n - 1];
+}
+
+/* ── Handle track change in settings ── */
+function onSettingsTrackChange() {
+  buildSettingLevels();
+}
+
+/* ── Save settings ── */
+function saveSettings() {
+  if (!session) return;
+  
+  // Collect all settings values
+  const grade = document.getElementById('set-grade').value;
+  const track = document.getElementById('set-track').value;
+  const goal = document.getElementById('set-goal').value.trim();
+  const year = document.getElementById('set-year').value;
+  const sem = document.getElementById('set-sem').value;
+  const hours = document.getElementById('set-hours').value;
+  
+  // Validate required fields
+  if (!grade || !track || !goal || !year || !sem || !hours) {
+    showToast('Please fill in all fields');
+    return;
+  }
+  
+  // Collect subject levels
+  const level = {};
+  const subjects = TRACK_SUBJECTS[track] || TRACK_SUBJECTS['abroad'];
+  subjects.forEach(subj => {
+    const selectedBtn = document.querySelector(`[data-subj="${subj}"].sel`);
+    level[subj] = selectedBtn ? parseInt(selectedBtn.dataset.n) : 3;
+  });
+  
+  // Update session data
+  session.obData = {
+    grade,
+    track,
+    goal,
+    year: parseInt(year),
+    sem,
+    level,
+    hours
+  };
+  
+  // Save to localStorage
+  localStorage.setItem('afp_sess', JSON.stringify(session));
+  
+  // Update dashboard with new data
+  buildDashboard(session);
+  
+  // Close modal
+  closeSettings();
+  
+  // Show success message
+  showToast('✓ Settings saved successfully');
+}
+
+/* ── Show toast notification ── */
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('on');
+  setTimeout(() => toast.classList.remove('on'), 2000);
+}
