@@ -1,81 +1,125 @@
-
 /* ═══════════════════════════════════
    dashboard.js — Build & interact with the dashboard
    ═══════════════════════════════════ */
 
 const CHAT_REPLIES = [
-  'Yes! Focus on the hardest part today and keep your momentum going. 💪',
-  'You are doing well so far! This pace is strong enough to reach your goal.',
-  'It’s okay to take a break for a day. We’ll redistribute the missed work over the next three days.',
-  'Focusing on your weakest area is the fastest way to improve!',
-  'Consistency is key. Take one step towards your goal today. 🎯',
+  "Yes! Focus on the hardest part today and keep your momentum going. 💪",
+  "You are doing well so far! This pace is strong enough to reach your goal.",
+  "It’s okay to take a break for a day. We’ll redistribute the missed work over the next three days.",
+  "Focusing on your weakest area is the fastest way to improve!",
+  "Consistency is key. Take one step towards your goal today. 🎯",
 ];
 let chatIndex = 0;
 
 /* ── Build the entire dashboard from user + obData ── */
 function buildDashboard(user) {
-  const ob    = (user && user.obData) || { track:'abroad', goal:'My Goal', year:2027, sem:'Second half', level:{}, hours:'3-4 hours' };
-  let   track = ob.track || 'abroad';
+  const ob = (user && user.obData) || {
+    track: "abroad",
+    goal: "My Goal",
+    year: 2027,
+    sem: "Second half",
+    level: {},
+    hours: "3-4 hours",
+  };
+  let track = ob.track || "abroad";
 
   // Safety guard — fall back to 'abroad' if track key is missing
-  if (!TRACK_CAPS[track])       track = 'abroad';
-  if (!TRACK_MILESTONES[track]) track = 'abroad';
-  if (!TRACK_BARS[track])       track = 'abroad';
-  if (!TRACK_TASKS[track])      track = 'abroad';
+  if (!TRACK_CAPS[track]) track = "abroad";
+  if (!TRACK_MILESTONES[track]) track = "abroad";
+  if (!TRACK_BARS[track]) track = "abroad";
+  if (!TRACK_TASKS[track]) track = "abroad";
 
-  const firstName = (user && user.name) ? user.name.split(' ')[0] : 'Student';
-  const initials  = (user && user.initials) || firstName.slice(0, 2).toUpperCase();
+  const firstName = user && user.name ? user.name.split(" ")[0] : "Student";
+  const initials =
+    (user && user.initials) || firstName.slice(0, 2).toUpperCase();
 
   // ── Header ──
-  document.getElementById('d-avatar').textContent = initials;
-  document.getElementById('d-name').textContent   = `Hi, ${firstName} 👋`;
+  document.getElementById("d-avatar").textContent = initials;
+  document.getElementById("d-name").textContent = `Hi, ${firstName} 👋`;
 
-  const now       = new Date();
-  const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const MON_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  document.getElementById('d-date').textContent = `${DAY_NAMES[now.getDay()]}, ${MON_NAMES[now.getMonth()]} ${now.getDate()} · Day 1 streak`;
+  const now = new Date();
+  const DAY_NAMES = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  const MON_NAMES = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  document.getElementById("d-date").textContent =
+    `${DAY_NAMES[now.getDay()]}, ${MON_NAMES[now.getMonth()]} ${now.getDate()} · Day 1 streak`;
 
   // ── Goal card ──
-  document.getElementById('d-goal-title').textContent = ob.goal || 'My Goal';
-  document.getElementById('d-goal-sub').textContent   = `${TRACK_NAMES[track]} · ${ob.year || 2027} ${ob.sem || 'Second half'}`;
+  document.getElementById("d-goal-title").textContent = ob.goal || "My Goal";
+  document.getElementById("d-goal-sub").textContent =
+    `${TRACK_NAMES[track]} · ${ob.year || 2027} ${ob.sem || "Second half"}`;
 
-  document.getElementById('d-caps').innerHTML = TRACK_CAPS[track]
-    .map(c => `<span class="gtag">${c}</span>`)
-    .join('');
+  document.getElementById("d-caps").innerHTML = TRACK_CAPS[track]
+    .map((c) => `<span class="gtag">${c}</span>`)
+    .join("");
 
   const verse = BIBLE_VERSES[Math.floor(Math.random() * BIBLE_VERSES.length)];
-  document.getElementById('verse-txt').textContent = verse.text;
-  document.getElementById('verse-ref').textContent = verse.ref;
+  document.getElementById("verse-txt").textContent = verse.text;
+  document.getElementById("verse-ref").textContent = verse.ref;
 
-  const targetDate = new Date(ob.year || 2027, ob.sem === 'First half' ? 5 : 11, 1);
-  const monthsLeft = Math.max(1, Math.round((targetDate - now) / (1000 * 60 * 60 * 24 * 30)));
-  document.getElementById('d-stats').innerHTML = `
+  const targetDate = new Date(
+    ob.year || 2027,
+    ob.sem === "First half" ? 5 : 11,
+    1,
+  );
+  const monthsLeft = Math.max(
+    1,
+    Math.round((targetDate - now) / (1000 * 60 * 60 * 24 * 30)),
+  );
+  document.getElementById("d-stats").innerHTML = `
     <div class="gstat"><div class="gstat-val">${monthsLeft} months</div><div class="gstat-lbl">Time left</div></div>
     <div class="gstat"><div class="gstat-val">5%</div><div class="gstat-lbl">Overall progress</div></div>
     <div class="gstat"><div class="gstat-val">${ob.year || 2027}</div><div class="gstat-lbl">Target year</div></div>`;
 
   // ── Stepping stones ──
   const ms = TRACK_MILESTONES[track];
-  let stHTML = '';
+  let stHTML = "";
   ms.forEach((m, i) => {
-    const state = m[1] === 'Complete' ? 'dn' : m[1] === 'In Progress' ? 'ac' : 'ft';
+    const state =
+      m[1] === "Complete" ? "dn" : m[1] === "In Progress" ? "ac" : "ft";
     if (i > 0) {
-      const prevState = ms[i-1][1] === 'Complete' ? 'dn' : ms[i-1][1] === 'In Progress' ? 'ac' : 'ft';
+      const prevState =
+        ms[i - 1][1] === "Complete"
+          ? "dn"
+          : ms[i - 1][1] === "In Progress"
+            ? "ac"
+            : "ft";
       stHTML += `<div class="sline ${prevState}"></div>`;
     }
-    stHTML += `<div class="stone"><div class="scircle ${state}">${state === 'dn' ? CHECK_SVG : i + 1}</div><div class="slabel">${m[0]}</div></div>`;
+    stHTML += `<div class="stone"><div class="scircle ${state}">${state === "dn" ? CHECK_SVG : i + 1}</div><div class="slabel">${m[0]}</div></div>`;
   });
   stHTML += `<div class="sline ft"></div><div class="stone"><div class="scircle ft" style="background:#FAEEDA;border-color:#EF9F27;color:#633806;font-size:15px;">🎓</div><div class="slabel">Final goal</div></div>`;
-  document.getElementById('d-stones').innerHTML = stHTML;
+  document.getElementById("d-stones").innerHTML = stHTML;
 
   // ── Milestone progress bars ──
-  const bars      = TRACK_BARS[track];
+  const bars = TRACK_BARS[track];
   const levelKeys = Object.keys(ob.level || {});
-  document.getElementById('d-bars').innerHTML = bars.map((b, i) => {
-    const subj = levelKeys[i] || b[0];
-    const raw  = (ob.level && ob.level[subj]) || 3;
-    const pct  = Math.round((raw / 5) * 60) + 10;   // maps 1–5 → 22–70 %
-    return `
+  document.getElementById("d-bars").innerHTML = bars
+    .map((b, i) => {
+      const subj = levelKeys[i] || b[0];
+      const raw = (ob.level && ob.level[subj]) || 3;
+      const pct = Math.round((raw / 5) * 60) + 10; // maps 1–5 → 22–70 %
+      return `
       <div class="ms-item">
         <div class="ms-row">
           <span class="ms-name">${b[0]}</span>
@@ -83,78 +127,90 @@ function buildDashboard(user) {
         </div>
         <div class="bar"><div class="bfill" style="width:${pct}%;background:${b[1]};"></div></div>
       </div>`;
-  }).join('');
+    })
+    .join("");
 
   // ── Today's tasks ──
   const tasks = TRACK_TASKS[track];
-  document.getElementById('d-tasks').innerHTML = tasks.map((t, i) => {
-    const done  = i < 1;
-    const sname = t.s.replace('s-','').replace('math','Math').replace('cs','CS')
-                    .replace('sat','SAT').replace('sci','Science').replace('eng','English')
-                    .replace('lang','Language Arts').replace('soc','Social Studies');
-    return `
-      <div class="task-row${done ? ' dn' : ''}">
-        <div class="chk${done ? ' dn' : ''}" onclick="toggleTask(this.parentElement)">${done ? CHECK_SVG : ''}</div>
+  document.getElementById("d-tasks").innerHTML = tasks
+    .map((t, i) => {
+      const done = i < 1;
+      const sname = t.s
+        .replace("s-", "")
+        .replace("math", "Math")
+        .replace("cs", "CS")
+        .replace("sat", "SAT")
+        .replace("sci", "Science")
+        .replace("eng", "English")
+        .replace("lang", "Language Arts")
+        .replace("soc", "Social Studies");
+      return `
+      <div class="task-row${done ? " dn" : ""}">
+        <div class="chk${done ? " dn" : ""}" onclick="toggleTask(this.parentElement)">${done ? CHECK_SVG : ""}</div>
         <div class="tinfo" onclick="toggleTask(this.parentElement)">
           <div class="tnm">${t.n}</div>
-          <div class="tdur">${t.d}${done ? ' · completed' : ''}</div>
+          <div class="tdur">${t.d}${done ? " · completed" : ""}</div>
         </div>
         <span class="tsubj ${t.s}">${sname}</span>
         <button class="task-delete" onclick="deleteTask(this.parentElement)" title="Delete task">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
         </button>
       </div>`;
-  }).join('');
+    })
+    .join("");
   updateSummary();
 
   // ── AI chat greeting ──
-  document.getElementById('chat-prev').textContent = `${firstName}, your goal analysis is ready! Shall we start your first study session today? 💪`;
+  document.getElementById("chat-prev").textContent =
+    `${firstName}, your goal analysis is ready! Shall we start your first study session today? 💪`;
 }
 
 /* ── Goal card expand/collapse ── */
 function toggleGoal() {
-  const d = document.getElementById('gdet');
-  const b = document.getElementById('gexpbtn');
-  const l = document.getElementById('gexplbl');
-  d.classList.toggle('open');
-  b.classList.toggle('open');
-  l.textContent = d.classList.contains('open') ? 'hide details' : 'see details';
+  const d = document.getElementById("gdet");
+  const b = document.getElementById("gexpbtn");
+  const l = document.getElementById("gexplbl");
+  d.classList.toggle("open");
+  b.classList.toggle("open");
+  l.textContent = d.classList.contains("open") ? "hide details" : "see details";
 }
 
 /* ── Task interactions ── */
 function toggleTask(row) {
-  const chk = row.querySelector('.chk');
-  const dur = row.querySelector('.tdur');
-  const dn  = row.classList.toggle('dn');
-  chk.classList.toggle('dn', dn);
-  chk.innerHTML = dn ? CHECK_SVG : '';
-  if (dn  && !dur.textContent.includes('completed')) dur.textContent += ' · completed';
-  if (!dn) dur.textContent = dur.textContent.replace(' · completed', '');
+  const chk = row.querySelector(".chk");
+  const dur = row.querySelector(".tdur");
+  const dn = row.classList.toggle("dn");
+  chk.classList.toggle("dn", dn);
+  chk.innerHTML = dn ? CHECK_SVG : "";
+  if (dn && !dur.textContent.includes("completed"))
+    dur.textContent += " · completed";
+  if (!dn) dur.textContent = dur.textContent.replace(" · completed", "");
   updateSummary();
 }
 
 function updateSummary() {
-  const all  = document.querySelectorAll('#d-tasks .task-row').length;
-  const done = document.querySelectorAll('#d-tasks .task-row.dn').length;
-  document.getElementById('t-summary').textContent = `${done} / ${all} tasks completed`;
+  const all = document.querySelectorAll("#d-tasks .task-row").length;
+  const done = document.querySelectorAll("#d-tasks .task-row.dn").length;
+  document.getElementById("t-summary").textContent =
+    `${done} / ${all} tasks completed`;
 }
 
 function toggleAdd() {
-  const area = document.getElementById('addarea');
-  area.classList.toggle('open');
-  if (area.classList.contains('open')) document.getElementById('newt').focus();
+  const area = document.getElementById("addarea");
+  area.classList.toggle("open");
+  if (area.classList.contains("open")) document.getElementById("newt").focus();
 }
 
 function addTask() {
-  const input = document.getElementById('newt');
-  const select = document.getElementById('new-subject');
-  const val   = input.value.trim();
+  const input = document.getElementById("newt");
+  const select = document.getElementById("new-subject");
+  const val = input.value.trim();
   if (!val) return;
 
   const subject = select.value;
-  const subjectName = select.selectedOptions[0].textContent || 'Task';
-  const row  = document.createElement('div');
-  row.className = 'task-row';
+  const subjectName = select.selectedOptions[0].textContent || "Task";
+  const row = document.createElement("div");
+  row.className = "task-row";
   row.innerHTML = `
     <div class="chk" onclick="toggleTask(this.parentElement)"></div>
     <div class="tinfo" onclick="toggleTask(this.parentElement)"><div class="tnm">${val}</div><div class="tdur">— min</div></div>
@@ -162,10 +218,10 @@ function addTask() {
     <button class="task-delete" onclick="deleteTask(this.parentElement)" title="Delete task">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
     </button>`;
-  document.getElementById('d-tasks').appendChild(row);
-  input.value = '';
+  document.getElementById("d-tasks").appendChild(row);
+  input.value = "";
   select.selectedIndex = 0;
-  document.getElementById('addarea').classList.remove('open');
+  document.getElementById("addarea").classList.remove("open");
   updateSummary();
 }
 
@@ -177,12 +233,13 @@ function deleteTask(row) {
 
 /* ── AI chat ── */
 function sendChat() {
-  const inp = document.getElementById('chat-in');
+  const inp = document.getElementById("chat-in");
   if (!inp.value.trim()) return;
-  inp.value = '';
-  document.getElementById('chat-prev').textContent = 'Thinking...';
+  inp.value = "";
+  document.getElementById("chat-prev").textContent = "Thinking...";
   setTimeout(() => {
-    document.getElementById('chat-prev').textContent = CHAT_REPLIES[chatIndex % CHAT_REPLIES.length];
+    document.getElementById("chat-prev").textContent =
+      CHAT_REPLIES[chatIndex % CHAT_REPLIES.length];
     chatIndex++;
   }, 700);
 }
@@ -193,32 +250,32 @@ function sendChat() {
 
 /* ── Open settings modal ── */
 function openSettings() {
-  const overlay = document.getElementById('settings-modal-overlay');
-  overlay.classList.add('open');
-  
+  const overlay = document.getElementById("settings-modal-overlay");
+  overlay.classList.add("open");
+
   // Populate settings with current data
   const ob = (session && session.obData) || {};
-  
+
   // Set values from session
-  document.getElementById('set-grade').value = ob.grade || '';
-  document.getElementById('set-track').value = ob.track || 'abroad';
-  document.getElementById('set-goal').value = ob.goal || '';
-  document.getElementById('set-year').value = ob.year || '';
-  document.getElementById('set-sem').value = ob.sem || '';
-  document.getElementById('set-hours').value = ob.hours || '';
-  
+  document.getElementById("set-grade").value = ob.grade || "";
+  document.getElementById("set-track").value = ob.track || "abroad";
+  document.getElementById("set-goal").value = ob.goal || "";
+  document.getElementById("set-year").value = ob.year || "";
+  document.getElementById("set-sem").value = ob.sem || "";
+  document.getElementById("set-hours").value = ob.hours || "";
+
   // Build years dropdown
-  const yearSelect = document.getElementById('set-year');
+  const yearSelect = document.getElementById("set-year");
   const now = new Date().getFullYear();
   yearSelect.innerHTML = '<option value="">Select Year</option>';
   for (let y = now; y <= now + 5; y++) {
-    const opt = document.createElement('option');
+    const opt = document.createElement("option");
     opt.value = y;
     opt.textContent = y;
     yearSelect.appendChild(opt);
   }
   if (ob.year) yearSelect.value = ob.year;
-  
+
   // Build subject levels
   buildSettingLevels();
 }
@@ -226,20 +283,25 @@ function openSettings() {
 /* ── Close settings modal ── */
 function closeSettings(event) {
   // If clicked on overlay background (not modal content), close
-  if (event && event.target !== document.getElementById('settings-modal-overlay')) return;
-  const overlay = document.getElementById('settings-modal-overlay');
-  overlay.classList.remove('open');
+  if (
+    event &&
+    event.target !== document.getElementById("settings-modal-overlay")
+  )
+    return;
+  const overlay = document.getElementById("settings-modal-overlay");
+  overlay.classList.remove("open");
 }
 
 /* ── Build subject level sliders ── */
 function buildSettingLevels() {
   const ob = (session && session.obData) || {};
-  const track = document.getElementById('set-track').value || ob.track || 'abroad';
-  const subjects = TRACK_SUBJECTS[track] || TRACK_SUBJECTS['abroad'];
-  const container = document.getElementById('set-levels');
-  
-  let html = '';
-  subjects.forEach(subj => {
+  const track =
+    document.getElementById("set-track").value || ob.track || "abroad";
+  const subjects = TRACK_SUBJECTS[track] || TRACK_SUBJECTS["abroad"];
+  const container = document.getElementById("set-levels");
+
+  let html = "";
+  subjects.forEach((subj) => {
     const curLevel = (ob.level && ob.level[subj]) || 3;
     html += `
       <div class="level-setting-item">
@@ -248,9 +310,12 @@ function buildSettingLevels() {
           <span class="level-setting-val" id="slv-${subj}">${LVL_LABELS[curLevel - 1]}</span>
         </div>
         <div class="level-setting-btns">
-          ${[1,2,3,4,5].map(n =>
-            `<button class="level-setting-btn${curLevel === n ? ' sel' : ''}" data-subj="${subj}" data-n="${n}" onclick="setSLevel(this)">${LVL_LABELS[n - 1].charAt(0)}</button>`
-          ).join('')}
+          ${[1, 2, 3, 4, 5]
+            .map(
+              (n) =>
+                `<button class="level-setting-btn${curLevel === n ? " sel" : ""}" data-subj="${subj}" data-n="${n}" onclick="setSLevel(this)">${LVL_LABELS[n - 1].charAt(0)}</button>`,
+            )
+            .join("")}
         </div>
       </div>`;
   });
@@ -261,13 +326,16 @@ function buildSettingLevels() {
 function setSLevel(btn) {
   const subj = btn.dataset.subj;
   const n = parseInt(btn.dataset.n);
-  
+
   // Update button selection
-  btn.closest('.level-setting-btns').querySelectorAll('.level-setting-btn').forEach(b => b.classList.remove('sel'));
-  btn.classList.add('sel');
-  
+  btn
+    .closest(".level-setting-btns")
+    .querySelectorAll(".level-setting-btn")
+    .forEach((b) => b.classList.remove("sel"));
+  btn.classList.add("sel");
+
   // Update value display
-  document.getElementById('slv-' + subj).textContent = LVL_LABELS[n - 1];
+  document.getElementById("slv-" + subj).textContent = LVL_LABELS[n - 1];
 }
 
 /* ── Handle track change in settings ── */
@@ -278,29 +346,29 @@ function onSettingsTrackChange() {
 /* ── Save settings ── */
 function saveSettings() {
   if (!session) return;
-  
+
   // Collect all settings values
-  const grade = document.getElementById('set-grade').value;
-  const track = document.getElementById('set-track').value;
-  const goal = document.getElementById('set-goal').value.trim();
-  const year = document.getElementById('set-year').value;
-  const sem = document.getElementById('set-sem').value;
-  const hours = document.getElementById('set-hours').value;
-  
+  const grade = document.getElementById("set-grade").value;
+  const track = document.getElementById("set-track").value;
+  const goal = document.getElementById("set-goal").value.trim();
+  const year = document.getElementById("set-year").value;
+  const sem = document.getElementById("set-sem").value;
+  const hours = document.getElementById("set-hours").value;
+
   // Validate required fields
   if (!grade || !track || !goal || !year || !sem || !hours) {
-    showToast('Please fill in all fields');
+    showToast("Please fill in all fields");
     return;
   }
-  
+
   // Collect subject levels
   const level = {};
-  const subjects = TRACK_SUBJECTS[track] || TRACK_SUBJECTS['abroad'];
-  subjects.forEach(subj => {
+  const subjects = TRACK_SUBJECTS[track] || TRACK_SUBJECTS["abroad"];
+  subjects.forEach((subj) => {
     const selectedBtn = document.querySelector(`[data-subj="${subj}"].sel`);
     level[subj] = selectedBtn ? parseInt(selectedBtn.dataset.n) : 3;
   });
-  
+
   // Update session data
   session.obData = {
     grade,
@@ -309,26 +377,26 @@ function saveSettings() {
     year: parseInt(year),
     sem,
     level,
-    hours
+    hours,
   };
-  
+
   // Save to localStorage
-  localStorage.setItem('afp_sess', JSON.stringify(session));
-  
+  localStorage.setItem("afp_sess", JSON.stringify(session));
+
   // Update dashboard with new data
   buildDashboard(session);
-  
+
   // Close modal
   closeSettings();
-  
+
   // Show success message
-  showToast('✓ Settings saved successfully');
+  showToast("✓ Settings saved successfully");
 }
 
 /* ── Show toast notification ── */
 function showToast(msg) {
-  const toast = document.getElementById('toast');
+  const toast = document.getElementById("toast");
   toast.textContent = msg;
-  toast.classList.add('on');
-  setTimeout(() => toast.classList.remove('on'), 2000);
+  toast.classList.add("on");
+  setTimeout(() => toast.classList.remove("on"), 2000);
 }
