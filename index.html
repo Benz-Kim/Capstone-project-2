@@ -30,10 +30,6 @@
           </svg>
           Continue with Google
         </button>
-        <button class="soc" onclick="socialLogin('Apple')">
-          <img src="images/apple-logo.png" alt="Apple Logo" style="width: 18px; height: 18px; object-fit: contain;" />
-          Continue with Apple
-        </button>
         <div class="div-line">or log in with ID</div>
         <div class="fl">
           <label class="flabel">ID</label>
@@ -403,6 +399,7 @@
 </div><!-- /shell -->
 
 <!-- Scripts — order matters: data → utils → auth → onboarding → dashboard → main -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="js/data.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/auth.js"></script>
