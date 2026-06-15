@@ -153,13 +153,46 @@ function checkPw() {
   hint.style.color     = cols[score - 1] || cols[0];
 }
 
+/* ── Year input handler ── */
+function onYearInput(input) {
+  // Allow only numbers
+  input.value = input.value.replace(/[^0-9]/g, '');
+  
+  // Auto-focus to month field when 4 digits are entered
+  if (input.value.length === 4) {
+    document.getElementById('r-dob-month').focus();
+  }
+}
+
+/* ── Month input handler ── */
+function onMonthInput(input) {
+  // Allow only numbers
+  input.value = input.value.replace(/[^0-9]/g, '');
+  
+  // Limit to valid month (01-12)
+  if (input.value.length > 0) {
+    const month = parseInt(input.value);
+    if (month > 12) {
+      input.value = '12';
+    }
+  }
+  
+  // Auto-focus to day field when 2 digits are entered
+  if (input.value.length === 2) {
+    document.getElementById('r-dob-day').focus();
+  }
+}
+
 function doRegister() {
-  const name  = document.getElementById('r-name').value.trim();
-  const id    = document.getElementById('r-id').value.trim();
-  const pw    = document.getElementById('r-pw').value;
-  const pw2   = document.getElementById('r-pw2').value;
-  const email = document.getElementById('r-email').value.trim();
-  const dob   = document.getElementById('r-dob').value;
+  const name   = document.getElementById('r-name').value.trim();
+  const id     = document.getElementById('r-id').value.trim();
+  const pw     = document.getElementById('r-pw').value;
+  const pw2    = document.getElementById('r-pw2').value;
+  const email  = document.getElementById('r-email').value.trim();
+  const year   = document.getElementById('r-dob-year').value.trim();
+  const month  = document.getElementById('r-dob-month').value.trim();
+  const day    = document.getElementById('r-dob-day').value.trim();
+  const dob    = year && month && day ? `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}` : '';
 
   let ok = true;
   const chk = (errId, cond) => { showErr(errId, !cond); if (!cond) ok = false; };
@@ -169,7 +202,7 @@ function doRegister() {
   chk('e-pw',     pw.length >= 8 && /[0-9]/.test(pw));
   chk('e-pw2',    pw === pw2);
   chk('e-email',  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
-  chk('e-dob',    !!dob);
+  chk('e-dob',    !!dob && isValidDate(dob));
   chk('e-gender', !!selGender);
   if (!ok) return;
 
@@ -188,6 +221,24 @@ function doRegister() {
   localStorage.setItem('afp_sess', JSON.stringify(user));
   toast('Account created! Welcome 🎉');
   setTimeout(() => go('s-ob1'), 700);
+}
+
+/* ── Validate date ── */
+function isValidDate(dateStr) {
+  const [year, month, day] = dateStr.split('-');
+  const y = parseInt(year);
+  const m = parseInt(month);
+  const d = parseInt(day);
+  
+  if (m < 1 || m > 12 || d < 1 || d > 31) return false;
+  if (y < 1900 || y > new Date().getFullYear()) return false;
+  
+  // Check for valid day in month
+  const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  if (y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0)) daysInMonth[1] = 29; // leap year
+  if (d > daysInMonth[m - 1]) return false;
+  
+  return true;
 }
 
 /* ── Logout ── */
