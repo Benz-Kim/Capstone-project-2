@@ -61,14 +61,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 12px;
+  padding: 12px;
 }
 
 /* ── Shell ── */
 .shell {
-  width: clamp(320px, 100%, 420px);
+  width: 100%;
   max-width: 420px;
-  min-height: min(100vh, 900px);
+  min-height: auto;
+  max-height: 100vh;
   border-radius: var(--rxl);
   overflow: hidden;
   border: 0.5px solid var(--b1);
@@ -85,9 +86,22 @@ body {
 /* ── Screen toggle ── */
 .screen {
   display: none;
+  height: 100%;
+  overflow: hidden;
 }
 .screen.active {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+#s-dashboard {
+  display: none;
+  flex-direction: column;
+}
+
+#s-dashboard.active {
+  display: flex;
 }
 
 /* ── Toast ── */
@@ -207,6 +221,28 @@ body {
   border: none;
   cursor: pointer;
   color: var(--t2);
+}
+
+/* date of birth row */
+.dob-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.dob-input {
+  flex: 1;
+  text-align: center;
+  font-size: 14px;
+  padding: 11px 8px;
+}
+.dob-input::placeholder {
+  font-size: 12px;
+}
+.dob-sep {
+  color: var(--t2);
+  font-weight: 600;
+  padding: 0 4px;
+  user-select: none;
 }
 
 /* buttons */
@@ -773,6 +809,7 @@ body {
   padding: 14px 18px;
   background: var(--bg);
   border-bottom: 0.5px solid var(--b1);
+  flex-shrink: 0;
 }
 .avatar {
   width: 40px;
@@ -829,7 +866,7 @@ body {
 
 .dash-body {
   padding: 14px 14px 0;
-  max-height: 72vh;
+  flex: 1;
   overflow-y: auto;
 }
 .dash-body::-webkit-scrollbar {
@@ -1256,6 +1293,7 @@ body {
   background: var(--bg);
   border-top: 0.5px solid var(--b1);
   padding: 10px 14px 16px;
+  flex-shrink: 0;
 }
 .chat-prev {
   background: linear-gradient(135deg, var(--blue) 0%, var(--blue-d) 100%);
@@ -1320,6 +1358,7 @@ body {
   z-index: 1000;
   align-items: center;
   justify-content: center;
+  padding: 12px;
 }
 
 .modal-overlay.open {
@@ -1329,12 +1368,14 @@ body {
 .modal-content {
   background: var(--bg);
   border-radius: var(--rxl);
-  width: 90%;
+  width: 100%;
   max-width: 420px;
-  max-height: 90vh;
+  max-height: 85vh;
   overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
   animation: slideUp 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes slideUp {
@@ -1355,6 +1396,7 @@ body {
   padding: 18px 18px;
   border-bottom: 0.5px solid var(--b1);
   background: var(--bg2);
+  flex-shrink: 0;
 }
 
 .modal-title {
@@ -1375,6 +1417,7 @@ body {
   color: var(--t2);
   border-radius: var(--r);
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .modal-close:hover {
@@ -1383,10 +1426,12 @@ body {
 }
 
 .modal-body {
-  padding: 16px;
+  padding: 0;
+  flex: 1;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 0;
 }
 
 .modal-footer {
@@ -1395,101 +1440,125 @@ body {
   padding: 14px 16px;
   border-top: 0.5px solid var(--b1);
   background: var(--bg2);
+  flex-shrink: 0;
 }
 
+/* Setting Section */
 .setting-section {
+  padding: 12px 0;
+  border-bottom: 0.5px solid var(--b1);
+}
+
+.setting-section:last-of-type {
+  border-bottom: none;
+}
+
+.setting-item {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.setting-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--t1);
-}
-
-.setting-input {
-  font-size: 13px;
-  padding: 10px 12px;
-  border: 0.5px solid var(--b2);
-  border-radius: var(--r);
-  background: var(--bg2);
-  color: var(--t1);
-  font-family: var(--font);
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-.setting-input:focus {
-  border-color: var(--blue);
-  box-shadow: 0 0 0 2px var(--blue-l);
-}
-
-/* Subject levels in settings */
-#set-levels {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.level-setting-item {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 10px 12px;
-  background: var(--bg2);
-  border-radius: var(--r);
-}
-
-.level-setting-row {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  font-size: 12px;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+  user-select: none;
 }
 
-.level-setting-subj {
+.setting-item:hover {
+  background: var(--bg2);
+}
+
+.setting-item.danger:hover {
+  background: rgba(226, 75, 74, 0.08);
+}
+
+.setting-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.setting-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.setting-name {
+  font-size: 14px;
   font-weight: 600;
   color: var(--t1);
 }
 
-.level-setting-val {
-  font-size: 11px;
-  color: var(--t2);
-  font-weight: 500;
+.setting-item.danger .setting-name {
+  color: var(--red);
 }
 
-.level-setting-btns {
+.setting-desc {
+  font-size: 12px;
+  color: var(--t2);
+  margin-top: 2px;
+}
+
+.setting-arrow {
   display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: var(--t3);
+  flex-shrink: 0;
 }
 
-.level-setting-btn {
-  flex: 1;
-  min-width: 40px;
-  padding: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  border: 0.5px solid var(--b2);
-  background: var(--bg);
-  color: var(--t2);
-  border-radius: var(--r);
+/* Toggle Switch */
+.setting-toggle {
+  position: relative;
+  width: 50px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.setting-toggle input {
+  display: none;
+}
+
+.setting-toggle label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--b2);
+  border-radius: 14px;
   cursor: pointer;
-  transition: all 0.2s;
-  font-family: var(--font);
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
 }
 
-.level-setting-btn:hover {
-  border-color: var(--blue);
-  color: var(--blue);
+.setting-toggle label::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  width: 24px;
+  height: 24px;
+  background: #fff;
+  border-radius: 50%;
+  transition: left 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.level-setting-btn.sel {
+.setting-toggle input:checked + label {
   background: var(--blue);
-  color: #fff;
-  border-color: var(--blue);
+}
+
+.setting-toggle input:checked + label::after {
+  left: calc(100% - 26px);
+}
+
+/* Divider */
+.setting-divider {
+  height: 8px;
+  background: var(--bg3);
+  border-top: 0.5px solid var(--b1);
+  border-bottom: 0.5px solid var(--b1);
 }
 
 /* Modal buttons */
