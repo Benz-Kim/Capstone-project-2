@@ -9,6 +9,16 @@ function go(id) {
   document.getElementById(id).classList.add('active');
 }
 
+/** Switch dashboard tab pane */
+function goTab(tabName) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.bn-tab').forEach(b => b.classList.remove('active'));
+  const pane = document.getElementById('tp-' + tabName);
+  const btn  = document.querySelector(`.bn-tab[data-tab="${tabName}"]`);
+  if (pane) pane.classList.add('active');
+  if (btn)  btn.classList.add('active');
+}
+
 /** Show a short toast notification */
 function toast(msg) {
   const t = document.getElementById('toast');

@@ -91,7 +91,6 @@ function buildDashboard(user) {
     <div class="gstat"><div class="gstat-val">5%</div><div class="gstat-lbl">Overall progress</div></div>
     <div class="gstat"><div class="gstat-val">${ob.year || 2027}</div><div class="gstat-lbl">Target year</div></div>`;
 
-  // ── Stepping stones ──
   const ms = TRACK_MILESTONES[track];
   let stHTML = "";
   ms.forEach((m, i) => {
@@ -121,16 +120,12 @@ function buildDashboard(user) {
       const pct = Math.round((raw / 5) * 60) + 10; // maps 1–5 → 22–70 %
       return `
       <div class="ms-item">
-        <div class="ms-row">
-          <span class="ms-name">${b[0]}</span>
-          <span class="ms-pct" style="color:${b[1]};">${pct}%</span>
-        </div>
+        <div class="ms-row"><span class="ms-name">${b[0]}</span><span class="ms-pct" style="color:${b[1]};">${pct}%</span></div>
         <div class="bar"><div class="bfill" style="width:${pct}%;background:${b[1]};"></div></div>
       </div>`;
     })
     .join("");
 
-  // ── Today's tasks ──
   const tasks = TRACK_TASKS[track];
   document.getElementById("d-tasks").innerHTML = tasks
     .map((t, i) => {
@@ -152,9 +147,6 @@ function buildDashboard(user) {
           <div class="tdur">${t.d}${done ? " · completed" : ""}</div>
         </div>
         <span class="tsubj ${t.s}">${sname}</span>
-        <button class="task-delete" onclick="deleteTask(this.parentElement)" title="Delete task">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-        </button>
       </div>`;
     })
     .join("");
@@ -165,7 +157,7 @@ function buildDashboard(user) {
     `${firstName}, your goal analysis is ready! Shall we start your first study session today? 💪`;
 }
 
-/* ── Goal card expand/collapse ── */
+/* ── Goal card ── */
 function toggleGoal() {
   const d = document.getElementById("gdet");
   const b = document.getElementById("gexpbtn");
@@ -206,7 +198,6 @@ function addTask() {
   const select = document.getElementById("new-subject");
   const val = input.value.trim();
   if (!val) return;
-
   const subject = select.value;
   const subjectName = select.selectedOptions[0].textContent || "Task";
   const row = document.createElement("div");
@@ -225,10 +216,76 @@ function addTask() {
   updateSummary();
 }
 
-/* ── Delete task ── */
-function deleteTask(row) {
-  row.remove();
-  updateSummary();
+/* ═══════════════════════════════════
+   Tab Switching
+   ═══════════════════════════════════ */
+const _tabBuilt = {};
+
+function switchTab(tabName) {
+  goTab(tabName);
+  if (_tabBuilt[tabName]) return;
+  _tabBuilt[tabName] = true;
+  if (tabName === 'roadmap')  buildRoadmapTab();
+  if (tabName === 'coach')    buildCoachTab();
+  if (tabName === 'progress') buildProgressTab();
+  if (tabName === 'profile')  buildProfileTab();
+}
+
+/* ═══════════════════════════════════
+   Roadmap Tab
+   ═══════════════════════════════════ */
+function buildRoadmapTab() {
+  const user  = session || {};
+  const ob    = user.obData || {};
+  let track   = ob.track || 'abroad';
+  if (!TRACK_MILESTONES[track]) track = 'abroad';
+
+  document.getElementById('rm-sub').textContent =
+    `${ob.goal || 'My Goal'} · ${ob.year || '?'} ${ob.sem || ''}`;
+
+  const ms   = TRACK_MILESTONES[track];
+  const bars = TRACK_BARS[track];
+  const ICONS = ['🎯','📚','🔬','🏆','✈️'];
+
+  let html = '';
+  ms.forEach((m, i) => {
+    const state    = m[1];
+    const cls      = state === 'Complete' ? 'dn' : state === 'In Progress' ? 'ac' : 'ft';
+    const barColor = bars[i] ? bars[i][1] : '#185FA5';
+    const pct      = state === 'Complete' ? 100 : state === 'In Progress' ? 40 : 0;
+    html += `
+      <div class="rm-step">
+        <div class="rm-left">
+          <div class="rm-dot ${cls}">${state === 'Complete' ? CHECK_SVG : i + 1}</div>
+          ${i < ms.length - 1 ? '<div class="rm-line"></div>' : ''}
+        </div>
+        <div class="rm-card">
+          <div class="rm-card-top">
+            <span class="rm-icon">${ICONS[i] || '📌'}</span>
+            <div class="rm-info">
+              <div class="rm-title">${m[0]}</div>
+              <div class="rm-status ${cls}-txt">${state}</div>
+            </div>
+          </div>
+          <div class="rm-bar-wrap">
+            <div class="rm-bar"><div class="rm-bfill" style="width:${pct}%;background:${barColor};"></div></div>
+            <span class="rm-pct">${pct}%</span>
+          </div>
+          ${bars[i] ? `<div class="rm-focus">Focus area: <strong>${bars[i][0]}</strong></div>` : ''}
+        </div>
+      </div>`;
+  });
+
+  html += `
+    <div class="rm-step">
+      <div class="rm-left"><div class="rm-dot goal">🎓</div></div>
+      <div class="rm-card rm-final">
+        <div class="rm-final-txt">${ob.goal || 'Final Goal'}</div>
+        <div class="rm-final-sub">${ob.year || '?'} · ${ob.sem || ''}</div>
+      </div>
+    </div>`;
+
+  document.getElementById('roadmap-body').innerHTML = html;
 }
 
 /* ── AI chat ── */
