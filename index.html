@@ -296,6 +296,8 @@
 
   <!-- ══════════ DASHBOARD ══════════ -->
   <div class="screen" id="s-dashboard">
+
+    <!-- Top Nav -->
     <div class="top-nav">
       <div class="avatar" id="d-avatar">HJ</div>
       <div class="greet">
@@ -307,101 +309,163 @@
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
           <span class="ndot"></span>
         </span>
-        <span class="ni">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        </span>
-        <span class="ni" onclick="doLogout()">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        </span>
       </div>
     </div>
 
-    <div class="dash-body">
-      <!-- Final Goal -->
-      <div class="card goal-card">
-        <div class="gchip">final goal</div>
-        <div class="gtitle" id="d-goal-title">My Goal</div>
-        <div class="gsub"   id="d-goal-sub">Track · Target</div>
-        <button class="gexpbtn" id="gexpbtn" onclick="toggleGoal()">
-          <span class="gchev">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B5D4F4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </span>
-          <span id="gexplbl">see details</span>
-        </button>
-        <div class="gdet" id="gdet">
-          <div class="gdet-inner">
-            <div style="font-size:11px;color:rgba(255,255,255,.65);margin-bottom:6px;">required capabilities</div>
-            <div id="d-caps"></div>
-            <div class="gstat-row" id="d-stats"></div>
+    <!-- Tab Pane Wrapper -->
+    <div class="tab-panes-wrap">
+
+      <!-- ── Home ── -->
+      <div class="tab-pane active" id="tp-home">
+        <div class="dash-body">
+          <div class="card goal-card">
+            <div class="gchip">final goal</div>
+            <div class="gtitle" id="d-goal-title">My Goal</div>
+            <div class="gsub"   id="d-goal-sub">Track · Target</div>
+            <button class="gexpbtn" id="gexpbtn" onclick="toggleGoal()">
+              <span class="gchev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B5D4F4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+              <span id="gexplbl">see details</span>
+            </button>
+            <div class="gdet" id="gdet">
+              <div class="gdet-inner">
+                <div style="font-size:11px;color:rgba(255,255,255,.65);margin-bottom:6px;">required capabilities</div>
+                <div id="d-caps"></div>
+                <div class="gstat-row" id="d-stats"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="slbl">stepping stones to your goal</div>
+            <div class="stones-scroll"><div class="stones-track" id="d-stones"></div></div>
+          </div>
+
+          <div class="card">
+            <div class="slbl">milestone progress</div>
+            <div id="d-bars"></div>
+          </div>
+
+          <div class="card">
+            <div class="tasks-hdr">
+              <div class="ttl">Today's tasks</div>
+              <button class="addbtn" onclick="toggleAdd()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                add task
+              </button>
+            </div>
+            <div id="d-tasks"></div>
+            <div class="addarea" id="addarea">
+              <input type="text" id="newt" placeholder="new task name..." onkeydown="if(event.key==='Enter') addTask()" />
+              <select id="new-subject">
+                <option value="s-math">Math</option>
+                <option value="s-cs">CS</option>
+                <option value="s-sat">SAT</option>
+                <option value="s-sci">Science</option>
+                <option value="s-eng">English</option>
+                <option value="s-lang">Language Arts</option>
+                <option value="s-soc">Social Studies</option>
+              </select>
+              <button onclick="addTask()">add</button>
+            </div>
+            <div style="margin-top:10px;font-size:12px;color:var(--t2);text-align:center;" id="t-summary"></div>
+          </div>
+
+          <div class="card verse-card">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <div class="verse-txt" id="verse-txt"></div>
+            <div class="verse-ref" id="verse-ref"></div>
+          </div>
+          <div style="height:8px;"></div>
+        </div>
+      </div>
+
+      <!-- ── Roadmap ── -->
+      <div class="tab-pane" id="tp-roadmap">
+        <div class="tab-header">
+          <div class="th-title">My Roadmap</div>
+          <div class="th-sub" id="rm-sub">Loading…</div>
+        </div>
+        <div class="tab-scroll" id="roadmap-body"></div>
+      </div>
+
+      <!-- ── AI Coach ── -->
+      <div class="tab-pane coach-pane" id="tp-coach">
+        <div class="coach-header">
+          <div class="coach-avatar-icon">🤖</div>
+          <div>
+            <div class="coach-title">AI Study Coach</div>
+            <div class="coach-status" id="coach-status">Powered by Gemini</div>
           </div>
         </div>
-      </div>
-
-      <!-- Stepping Stones -->
-      <div class="card">
-        <div class="slbl">stepping stones to your goal</div>
-        <div class="stones-scroll"><div class="stones-track" id="d-stones"></div></div>
-      </div>
-
-      <!-- Milestone Bars -->
-      <div class="card">
-        <div class="slbl">milestone progress</div>
-        <div id="d-bars"></div>
-      </div>
-
-      <!-- Today's Tasks -->
-      <div class="card">
-        <div class="tasks-hdr">
-          <div class="ttl">Today's tasks</div>
-          <button class="addbtn" onclick="toggleAdd()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            add task
+        <div class="coach-messages" id="coach-messages"></div>
+        <div class="coach-input-wrap">
+          <input type="text" id="coach-in" placeholder="Ask your AI coach…"
+                 onkeydown="if(event.key==='Enter') sendCoachMessage()" />
+          <button class="chat-send" onclick="sendCoachMessage()">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
           </button>
         </div>
-        <div id="d-tasks"></div>
-        <div class="addarea" id="addarea">
-          <input type="text" id="newt" placeholder="new task name..." onkeydown="if(event.key==='Enter') addTask()" />
-          <select id="new-subject">
-            <option value="s-math">Math</option>
-            <option value="s-cs">CS</option>
-            <option value="s-sat">SAT</option>
-            <option value="s-sci">Science</option>
-            <option value="s-eng">English</option>
-            <option value="s-lang">Language Arts</option>
-            <option value="s-soc">Social Studies</option>
-          </select>
-          <button onclick="addTask()">add</button>
+      </div>
+
+      <!-- ── Progress ── -->
+      <div class="tab-pane" id="tp-progress">
+        <div class="tab-header">
+          <div class="th-title">Progress</div>
+          <div class="th-sub">Track your consistency</div>
         </div>
-        <div style="margin-top:10px;font-size:12px;color:var(--t2);text-align:center;" id="t-summary"></div>
+        <div class="tab-scroll" id="progress-body"></div>
       </div>
 
-      <!-- Bible Verse -->
-      <div class="card verse-card">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-        <div class="verse-txt" id="verse-txt"></div>
-        <div class="verse-ref" id="verse-ref"></div>
+      <!-- ── Profile ── -->
+      <div class="tab-pane" id="tp-profile">
+        <div class="tab-scroll" id="profile-body"></div>
       </div>
-      <div style="height:8px;"></div>
+
+    </div><!-- /tab-panes-wrap -->
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <button class="bn-tab active" data-tab="home" onclick="switchTab('home')">
+        <span class="bn-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </span>
+        <span class="bn-lbl">Home</span>
+      </button>
+      <button class="bn-tab" data-tab="roadmap" onclick="switchTab('roadmap')">
+        <span class="bn-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+        </span>
+        <span class="bn-lbl">Roadmap</span>
+      </button>
+      <button class="bn-tab bn-center" data-tab="coach" onclick="switchTab('coach')">
+        <span class="bn-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4c0 1.5-.8 2.8-2 3.5V11h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2h2V9.5C8.8 8.8 8 7.5 8 6a4 4 0 0 1 4-4z"/><circle cx="12" cy="6" r="1.5" fill="currentColor"/></svg>
+        </span>
+        <span class="bn-lbl">AI Coach</span>
+      </button>
+      <button class="bn-tab" data-tab="progress" onclick="switchTab('progress')">
+        <span class="bn-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </span>
+        <span class="bn-lbl">Progress</span>
+      </button>
+      <button class="bn-tab" data-tab="profile" onclick="switchTab('profile')">
+        <span class="bn-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </span>
+        <span class="bn-lbl">Profile</span>
+      </button>
     </div>
 
-    <!-- AI Chat -->
-    <div class="chat-btm">
-      <div class="chat-prev" id="chat-prev">Your AI coach has prepared a custom plan! Ask anything 🎯</div>
-      <div class="chat-row">
-        <input type="text" id="chat-in" placeholder="Ask the AI coach..." onkeydown="if(event.key==='Enter') sendChat()" />
-        <button class="chat-send" onclick="sendChat()">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        </button>
-      </div>
-    </div>
   </div><!-- /s-dashboard -->
 
 </div><!-- /shell -->
 
-<!-- Scripts — order matters: data → utils → auth → onboarding → dashboard → main -->
+<!-- Scripts — order matters: data → utils → ai → auth → onboarding → dashboard → main -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="js/data.js"></script>
 <script src="js/utils.js"></script>
+<script src="js/ai.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/onboarding.js"></script>
 <script src="js/dashboard.js"></script>
