@@ -1,218 +1,154 @@
+
 /* ═══════════════════════════════════
    dashboard.js — Build & interact with the dashboard
    ═══════════════════════════════════ */
 
 const CHAT_REPLIES = [
-  "Yes! Focus on the hardest part today and keep your momentum going. 💪",
+  'Yes! Focus on the hardest part today and keep your momentum going. 💪',
   "You are doing well so far! This pace is strong enough to reach your goal.",
-  "It’s okay to take a break for a day. We’ll redistribute the missed work over the next three days.",
-  "Focusing on your weakest area is the fastest way to improve!",
-  "Consistency is key. Take one step towards your goal today. 🎯",
+  "It's okay to take a break for a day. We'll redistribute the missed work over the next three days.",
+  'Focusing on your weakest area is the fastest way to improve!',
+  'Consistency is key. Take one step towards your goal today. 🎯',
 ];
 let chatIndex = 0;
 
 /* ── Build the entire dashboard from user + obData ── */
 function buildDashboard(user) {
-  const ob = (user && user.obData) || {
-    track: "abroad",
-    goal: "My Goal",
-    year: 2027,
-    sem: "Second half",
-    level: {},
-    hours: "3-4 hours",
-  };
-  let track = ob.track || "abroad";
+  const ob    = (user && user.obData) || { track:'abroad', goal:'My Goal', year:2027, sem:'Second half', level:{}, hours:'3-4 hours' };
+  let   track = ob.track || 'abroad';
 
-  // Safety guard — fall back to 'abroad' if track key is missing
-  if (!TRACK_CAPS[track]) track = "abroad";
-  if (!TRACK_MILESTONES[track]) track = "abroad";
-  if (!TRACK_BARS[track]) track = "abroad";
-  if (!TRACK_TASKS[track]) track = "abroad";
+  if (!TRACK_CAPS[track])       track = 'abroad';
+  if (!TRACK_MILESTONES[track]) track = 'abroad';
+  if (!TRACK_BARS[track])       track = 'abroad';
+  if (!TRACK_TASKS[track])      track = 'abroad';
 
-  const firstName = user && user.name ? user.name.split(" ")[0] : "Student";
-  const initials =
-    (user && user.initials) || firstName.slice(0, 2).toUpperCase();
+  const firstName = (user && user.name) ? user.name.split(' ')[0] : 'Student';
+  const initials  = (user && user.initials) || firstName.slice(0, 2).toUpperCase();
 
-  // ── Header ──
-  document.getElementById("d-avatar").textContent = initials;
-  document.getElementById("d-name").textContent = `Hi, ${firstName} 👋`;
+  document.getElementById('d-avatar').textContent = initials;
+  document.getElementById('d-name').textContent   = `Hi, ${firstName} 👋`;
 
-  const now = new Date();
-  const DAY_NAMES = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
-  const MON_NAMES = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-  document.getElementById("d-date").textContent =
-    `${DAY_NAMES[now.getDay()]}, ${MON_NAMES[now.getMonth()]} ${now.getDate()} · Day 1 streak`;
+  const now       = new Date();
+  const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const MON_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const streak    = (typeof getStreak === 'function') ? getStreak() : 0;
+  document.getElementById('d-date').textContent = `${DAY_NAMES[now.getDay()]}, ${MON_NAMES[now.getMonth()]} ${now.getDate()} · 🔥 ${streak} day streak`;
 
-  // ── Goal card ──
-  document.getElementById("d-goal-title").textContent = ob.goal || "My Goal";
-  document.getElementById("d-goal-sub").textContent =
-    `${TRACK_NAMES[track]} · ${ob.year || 2027} ${ob.sem || "Second half"}`;
+  document.getElementById('d-goal-title').textContent = ob.goal || 'My Goal';
+  document.getElementById('d-goal-sub').textContent   = `${TRACK_NAMES[track]} · ${ob.year || 2027} ${ob.sem || 'Second half'}`;
 
-  document.getElementById("d-caps").innerHTML = TRACK_CAPS[track]
-    .map((c) => `<span class="gtag">${c}</span>`)
-    .join("");
+  document.getElementById('d-caps').innerHTML = TRACK_CAPS[track]
+    .map(c => `<span class="gtag">${c}</span>`).join('');
 
   const verse = BIBLE_VERSES[Math.floor(Math.random() * BIBLE_VERSES.length)];
-  document.getElementById("verse-txt").textContent = verse.text;
-  document.getElementById("verse-ref").textContent = verse.ref;
+  document.getElementById('verse-txt').textContent = verse.text;
+  document.getElementById('verse-ref').textContent = verse.ref;
 
-  const targetDate = new Date(
-    ob.year || 2027,
-    ob.sem === "First half" ? 5 : 11,
-    1,
-  );
-  const monthsLeft = Math.max(
-    1,
-    Math.round((targetDate - now) / (1000 * 60 * 60 * 24 * 30)),
-  );
-  document.getElementById("d-stats").innerHTML = `
+  const targetDate = new Date(ob.year || 2027, ob.sem === 'First half' ? 5 : 11, 1);
+  const monthsLeft = Math.max(1, Math.round((targetDate - now) / (1000 * 60 * 60 * 24 * 30)));
+  document.getElementById('d-stats').innerHTML = `
     <div class="gstat"><div class="gstat-val">${monthsLeft} months</div><div class="gstat-lbl">Time left</div></div>
     <div class="gstat"><div class="gstat-val">5%</div><div class="gstat-lbl">Overall progress</div></div>
     <div class="gstat"><div class="gstat-val">${ob.year || 2027}</div><div class="gstat-lbl">Target year</div></div>`;
 
   const ms = TRACK_MILESTONES[track];
-  let stHTML = "";
+  let stHTML = '';
   ms.forEach((m, i) => {
-    const state =
-      m[1] === "Complete" ? "dn" : m[1] === "In Progress" ? "ac" : "ft";
+    const state = m[1] === 'Complete' ? 'dn' : m[1] === 'In Progress' ? 'ac' : 'ft';
     if (i > 0) {
-      const prevState =
-        ms[i - 1][1] === "Complete"
-          ? "dn"
-          : ms[i - 1][1] === "In Progress"
-            ? "ac"
-            : "ft";
+      const prevState = ms[i-1][1] === 'Complete' ? 'dn' : ms[i-1][1] === 'In Progress' ? 'ac' : 'ft';
       stHTML += `<div class="sline ${prevState}"></div>`;
     }
-    stHTML += `<div class="stone"><div class="scircle ${state}">${state === "dn" ? CHECK_SVG : i + 1}</div><div class="slabel">${m[0]}</div></div>`;
+    stHTML += `<div class="stone"><div class="scircle ${state}">${state === 'dn' ? CHECK_SVG : i + 1}</div><div class="slabel">${m[0]}</div></div>`;
   });
   stHTML += `<div class="sline ft"></div><div class="stone"><div class="scircle ft" style="background:#FAEEDA;border-color:#EF9F27;color:#633806;font-size:15px;">🎓</div><div class="slabel">Final goal</div></div>`;
-  document.getElementById("d-stones").innerHTML = stHTML;
+  document.getElementById('d-stones').innerHTML = stHTML;
 
-  // ── Milestone progress bars ──
-  const bars = TRACK_BARS[track];
+  const bars      = TRACK_BARS[track];
   const levelKeys = Object.keys(ob.level || {});
-  document.getElementById("d-bars").innerHTML = bars
-    .map((b, i) => {
-      const subj = levelKeys[i] || b[0];
-      const raw = (ob.level && ob.level[subj]) || 3;
-      const pct = Math.round((raw / 5) * 60) + 10; // maps 1–5 → 22–70 %
-      return `
+  document.getElementById('d-bars').innerHTML = bars.map((b, i) => {
+    const subj = levelKeys[i] || b[0];
+    const raw  = (ob.level && ob.level[subj]) || 3;
+    const pct  = Math.round((raw / 5) * 60) + 10;
+    return `
       <div class="ms-item">
         <div class="ms-row"><span class="ms-name">${b[0]}</span><span class="ms-pct" style="color:${b[1]};">${pct}%</span></div>
         <div class="bar"><div class="bfill" style="width:${pct}%;background:${b[1]};"></div></div>
       </div>`;
-    })
-    .join("");
+  }).join('');
 
   const tasks = TRACK_TASKS[track];
-  document.getElementById("d-tasks").innerHTML = tasks
-    .map((t, i) => {
-      const done = i < 1;
-      const sname = t.s
-        .replace("s-", "")
-        .replace("math", "Math")
-        .replace("cs", "CS")
-        .replace("sat", "SAT")
-        .replace("sci", "Science")
-        .replace("eng", "English")
-        .replace("lang", "Language Arts")
-        .replace("soc", "Social Studies");
-      return `
-      <div class="task-row${done ? " dn" : ""}">
-        <div class="chk${done ? " dn" : ""}" onclick="toggleTask(this.parentElement)">${done ? CHECK_SVG : ""}</div>
-        <div class="tinfo" onclick="toggleTask(this.parentElement)">
-          <div class="tnm">${t.n}</div>
-          <div class="tdur">${t.d}${done ? " · completed" : ""}</div>
-        </div>
+  document.getElementById('d-tasks').innerHTML = tasks.map((t, i) => {
+    const done  = i < 1;
+    const sname = t.s.replace('s-','').replace('math','Math').replace('cs','CS')
+                    .replace('sat','SAT').replace('sci','Science').replace('eng','English')
+                    .replace('lang','Language Arts').replace('soc','Social Studies');
+    return `
+      <div class="task-row${done ? ' dn' : ''}" onclick="toggleTask(this)">
+        <div class="chk${done ? ' dn' : ''}">${done ? CHECK_SVG : ''}</div>
+        <div class="tinfo"><div class="tnm">${t.n}</div><div class="tdur">${t.d}${done ? ' · completed' : ''}</div></div>
         <span class="tsubj ${t.s}">${sname}</span>
       </div>`;
-    })
-    .join("");
+  }).join('');
   updateSummary();
 
-  // ── AI chat greeting ──
-  document.getElementById("chat-prev").textContent =
-    `${firstName}, your goal analysis is ready! Shall we start your first study session today? 💪`;
+  // reset tab cache on rebuild
+  Object.keys(_tabBuilt).forEach(k => delete _tabBuilt[k]);
 }
 
 /* ── Goal card ── */
 function toggleGoal() {
-  const d = document.getElementById("gdet");
-  const b = document.getElementById("gexpbtn");
-  const l = document.getElementById("gexplbl");
-  d.classList.toggle("open");
-  b.classList.toggle("open");
-  l.textContent = d.classList.contains("open") ? "hide details" : "see details";
+  const d = document.getElementById('gdet');
+  const b = document.getElementById('gexpbtn');
+  const l = document.getElementById('gexplbl');
+  d.classList.toggle('open');
+  b.classList.toggle('open');
+  l.textContent = d.classList.contains('open') ? 'hide details' : 'see details';
 }
 
 /* ── Task interactions ── */
 function toggleTask(row) {
-  const chk = row.querySelector(".chk");
-  const dur = row.querySelector(".tdur");
-  const dn = row.classList.toggle("dn");
-  chk.classList.toggle("dn", dn);
-  chk.innerHTML = dn ? CHECK_SVG : "";
-  if (dn && !dur.textContent.includes("completed"))
-    dur.textContent += " · completed";
-  if (!dn) dur.textContent = dur.textContent.replace(" · completed", "");
+  const chk = row.querySelector('.chk');
+  const dur = row.querySelector('.tdur');
+  const dn  = row.classList.toggle('dn');
+  chk.classList.toggle('dn', dn);
+  chk.innerHTML = dn ? CHECK_SVG : '';
+  if (dn  && !dur.textContent.includes('completed')) dur.textContent += ' · completed';
+  if (!dn) dur.textContent = dur.textContent.replace(' · completed', '');
   updateSummary();
 }
 
 function updateSummary() {
-  const all = document.querySelectorAll("#d-tasks .task-row").length;
-  const done = document.querySelectorAll("#d-tasks .task-row.dn").length;
-  document.getElementById("t-summary").textContent =
-    `${done} / ${all} tasks completed`;
+  const all  = document.querySelectorAll('#d-tasks .task-row').length;
+  const done = document.querySelectorAll('#d-tasks .task-row.dn').length;
+  document.getElementById('t-summary').textContent = `${done} / ${all} tasks completed`;
+  if (typeof saveDailyProgress === 'function') saveDailyProgress(all, done);
 }
 
 function toggleAdd() {
-  const area = document.getElementById("addarea");
-  area.classList.toggle("open");
-  if (area.classList.contains("open")) document.getElementById("newt").focus();
+  const area = document.getElementById('addarea');
+  area.classList.toggle('open');
+  if (area.classList.contains('open')) document.getElementById('newt').focus();
 }
 
 function addTask() {
-  const input = document.getElementById("newt");
-  const select = document.getElementById("new-subject");
-  const val = input.value.trim();
+  const input = document.getElementById('newt');
+  const select = document.getElementById('new-subject');
+  const val   = input.value.trim();
   if (!val) return;
   const subject = select.value;
-  const subjectName = select.selectedOptions[0].textContent || "Task";
-  const row = document.createElement("div");
-  row.className = "task-row";
+  const subjectName = select.selectedOptions[0].textContent || 'Task';
+  const row  = document.createElement('div');
+  row.className = 'task-row';
+  row.onclick   = function() { toggleTask(this); };
   row.innerHTML = `
-    <div class="chk" onclick="toggleTask(this.parentElement)"></div>
-    <div class="tinfo" onclick="toggleTask(this.parentElement)"><div class="tnm">${val}</div><div class="tdur">— min</div></div>
-    <span class="tsubj ${subject}">${subjectName}</span>
-    <button class="task-delete" onclick="deleteTask(this.parentElement)" title="Delete task">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-    </button>`;
-  document.getElementById("d-tasks").appendChild(row);
-  input.value = "";
+    <div class="chk"></div>
+    <div class="tinfo"><div class="tnm">${val}</div><div class="tdur">— min</div></div>
+    <span class="tsubj ${subject}">${subjectName}</span>`;
+  document.getElementById('d-tasks').appendChild(row);
+  input.value = '';
   select.selectedIndex = 0;
-  document.getElementById("addarea").classList.remove("open");
+  document.getElementById('addarea').classList.remove('open');
   updateSummary();
 }
 
@@ -288,93 +224,172 @@ function buildRoadmapTab() {
   document.getElementById('roadmap-body').innerHTML = html;
 }
 
-/* ── AI chat ── */
-function sendChat() {
-  const inp = document.getElementById("chat-in");
-  if (!inp.value.trim()) return;
-  inp.value = "";
-  document.getElementById("chat-prev").textContent = "Thinking...";
-  setTimeout(() => {
-    document.getElementById("chat-prev").textContent =
-      CHAT_REPLIES[chatIndex % CHAT_REPLIES.length];
-    chatIndex++;
-  }, 700);
-}
+/* ═══════════════════════════════════
+   AI Coach Tab
+   ═══════════════════════════════════ */
+let coachMessages = [];
 
-/* ══════════════════════════════════
-   SETTINGS MODAL FUNCTIONS
-   ═════════════════════════════════ */
+function buildCoachTab() {
+  const user      = session || {};
+  const firstName = user.name ? user.name.split(' ')[0] : 'Student';
+  const hasKey    = !!(typeof getGeminiKey === 'function' && getGeminiKey());
 
-/* ── Open settings modal ── */
-function openSettings() {
-  const overlay = document.getElementById("settings-modal-overlay");
-  overlay.classList.add("open");
-  
-  // Load dark mode toggle state
-  const isDarkMode = localStorage.getItem("afp_dark_mode") === "true";
-  document.getElementById("dark-mode-toggle").checked = isDarkMode;
-}
-
-/* ── Close settings modal ── */
-function closeSettings(event) {
-  // If clicked on overlay background (not modal content), close
-  if (
-    event &&
-    event.target !== document.getElementById("settings-modal-overlay")
-  )
-    return;
-  const overlay = document.getElementById("settings-modal-overlay");
-  overlay.classList.remove("open");
-}
-
-/* ── View Account Info ── */
-function viewAccountInfo() {
-  if (!session) return;
-  const name = session.name || "User";
-  const email = session.email || "user@email.com";
-  showToast(`Account: ${name} (${email})`);
-}
-
-/* ── Change Profile Picture ── */
-function changeProfilePicture() {
-  showToast("📷 Profile picture upload coming soon");
-}
-
-/* ── Toggle Dark Mode ── */
-function toggleDarkMode() {
-  const isDarkMode = document.getElementById("dark-mode-toggle").checked;
-  localStorage.setItem("afp_dark_mode", isDarkMode);
-  
-  if (isDarkMode) {
-    document.documentElement.style.colorScheme = "dark";
-  } else {
-    document.documentElement.style.colorScheme = "light";
+  const statusEl = document.getElementById('coach-status');
+  if (statusEl) {
+    statusEl.textContent = hasKey ? '✅ Gemini connected' : '⚠️ API key not set — go to Profile';
+    statusEl.style.color = hasKey ? 'var(--green)' : 'var(--amber)';
   }
-  
-  showToast(isDarkMode ? "🌙 Dark mode enabled" : "☀️ Light mode enabled");
+
+  coachMessages = [{
+    role: 'ai',
+    text: hasKey
+      ? `Hi ${firstName}! I'm your AI study coach powered by Gemini. Ask me anything about your studies or goal! 🎯`
+      : `Hi ${firstName}! I'm your AI study coach. Set your Gemini API key in Profile to unlock real AI. For now I'll use coaching tips 💡`
+  }];
+  renderCoachMessages();
 }
 
-/* ── Delete Account ── */
-function deleteAccount() {
-  const confirmed = confirm(
-    "⚠️ Are you sure you want to delete your account? This cannot be undone."
-  );
-  if (confirmed) {
-    const finalConfirm = confirm(
-      "This will permanently delete all your data. Continue?"
-    );
-    if (finalConfirm) {
-      localStorage.removeItem("afp_sess");
-      localStorage.removeItem("afp_dark_mode");
-      window.location.reload();
-    }
+function renderCoachMessages() {
+  const el = document.getElementById('coach-messages');
+  if (!el) return;
+  el.innerHTML = coachMessages.map(m => `
+    <div class="cmsg ${m.role}">
+      ${m.role === 'ai' ? '<div class="cmsg-avatar">🤖</div>' : ''}
+      <div class="cmsg-bubble">${m.text}</div>
+    </div>`).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+async function sendCoachMessage() {
+  const inp = document.getElementById('coach-in');
+  const txt = inp ? inp.value.trim() : '';
+  if (!txt) return;
+  inp.value = '';
+
+  coachMessages.push({ role: 'user', text: txt });
+  coachMessages.push({ role: 'ai', text: '...' });
+  renderCoachMessages();
+
+  try {
+    const reply = await askGemini(txt);
+    coachMessages.pop();
+    coachMessages.push({ role: 'ai', text: reply || CHAT_REPLIES[chatIndex++ % CHAT_REPLIES.length] });
+  } catch (e) {
+    coachMessages.pop();
+    coachMessages.push({ role: 'ai', text: `⚠️ ${e.message || 'Error. Check API key in Profile.'}` });
   }
+  renderCoachMessages();
 }
 
-/* ── Show toast notification ── */
-function showToast(msg) {
-  const toast = document.getElementById("toast");
-  toast.textContent = msg;
-  toast.classList.add("on");
-  setTimeout(() => toast.classList.remove("on"), 2000);
+/* ═══════════════════════════════════
+   Progress Tab
+   ═══════════════════════════════════ */
+function buildProgressTab() {
+  const history = (typeof getProgressHistory === 'function') ? getProgressHistory(7) : [];
+  const streak  = (typeof getStreak === 'function') ? getStreak() : 0;
+  const today   = history[history.length - 1] || { total: 0, done: 0 };
+  const todayPct = today.total > 0 ? Math.round((today.done / today.total) * 100) : 0;
+  const DAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  const r    = 42;
+  const circ = Math.round(2 * Math.PI * r);
+  const dash = Math.round(circ * (1 - todayPct / 100));
+
+  const barsHtml = history.map(d => {
+    const pct    = d.total > 0 ? Math.round((d.done / d.total) * 100) : 0;
+    const date   = new Date(d.date + 'T00:00:00');
+    const label  = DAY_SHORT[date.getDay()];
+    const isToday = d.date === new Date().toISOString().slice(0, 10);
+    return `
+      <div class="pg-bar-col">
+        <div class="pg-bar-track">
+          <div class="pg-bar-fill${isToday ? ' today' : ''}" style="height:${pct}%"></div>
+        </div>
+        <div class="pg-bar-lbl${isToday ? ' today' : ''}">${label}</div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('progress-body').innerHTML = `
+    <div class="pg-streak-banner">
+      <span class="pg-flame">🔥</span>
+      <span class="pg-streak-num">${streak}</span>
+      <span class="pg-streak-lbl">day streak</span>
+    </div>
+    <div class="pg-ring-wrap">
+      <svg width="120" height="120" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--bg2)" stroke-width="9"/>
+        <circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--blue)" stroke-width="9"
+          stroke-linecap="round"
+          stroke-dasharray="${circ}" stroke-dashoffset="${dash}"
+          transform="rotate(-90 50 50)"
+          style="transition:stroke-dashoffset .6s ease"/>
+      </svg>
+      <div class="pg-ring-center">
+        <div class="pg-ring-pct">${todayPct}%</div>
+        <div class="pg-ring-lbl">Today</div>
+      </div>
+    </div>
+    <div class="pg-section-lbl">Last 7 days</div>
+    <div class="pg-bars-wrap">${barsHtml}</div>
+    <div class="pg-summary-row">
+      <div class="pg-stat"><div class="pg-stat-val">${today.done}</div><div class="pg-stat-lbl">Done today</div></div>
+      <div class="pg-stat"><div class="pg-stat-val">${history.filter(d => d.done > 0).length}</div><div class="pg-stat-lbl">Active days</div></div>
+      <div class="pg-stat"><div class="pg-stat-val">${history.reduce((s,d) => s + d.done, 0)}</div><div class="pg-stat-lbl">Total (7d)</div></div>
+    </div>`;
+}
+
+/* ═══════════════════════════════════
+   Profile Tab
+   ═══════════════════════════════════ */
+function buildProfileTab() {
+  const user = session || {};
+  const ob   = user.obData || {};
+  const track = ob.track || 'abroad';
+  const trackName = TRACK_NAMES[track] || 'Study Abroad';
+  const initials  = user.initials || (user.name || 'ST').slice(0,2).toUpperCase();
+  const currentKey = (typeof getGeminiKey === 'function') ? getGeminiKey() : '';
+
+  document.getElementById('profile-body').innerHTML = `
+    <div class="pf-hero">
+      <div class="pf-avatar">${initials}</div>
+      <div class="pf-name">${user.name || 'Student'}</div>
+      <div class="pf-email">${user.email || ''}</div>
+    </div>
+    <div class="pf-section">
+      <div class="pf-label">GOAL</div>
+      <div class="pf-goal-box">
+        <div class="pf-goal-txt">${ob.goal || 'Not set'}</div>
+        <div class="pf-goal-meta">${trackName} · ${ob.year || '?'} ${ob.sem || ''} · ${ob.hours || '?'} / day</div>
+      </div>
+    </div>
+    <div class="pf-section">
+      <div class="pf-label">AI COACH — GEMINI API KEY</div>
+      <div class="pf-api-row">
+        <input class="pf-api-input" id="pf-api-key" type="password"
+               placeholder="Paste your Gemini API key…"
+               value="${currentKey ? '●'.repeat(16) : ''}" />
+        <button class="pf-api-btn" onclick="saveApiKey()">Save</button>
+      </div>
+      ${currentKey
+        ? '<div class="pf-api-ok">✅ AI Coach is active</div>'
+        : '<div class="pf-api-hint">Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a> · stored locally only.</div>'}
+    </div>
+    <div class="pf-section">
+      <div class="pf-label">ACCOUNT</div>
+      <button class="pf-btn outline" onclick="toast('Re-onboarding coming soon!')">✏️ Edit goals &amp; preferences</button>
+      <button class="pf-btn danger" onclick="doLogout()">Sign out</button>
+    </div>
+    <div style="height:16px;"></div>`;
+}
+
+function saveApiKey() {
+  const inp = document.getElementById('pf-api-key');
+  if (!inp) return;
+  const raw = inp.value.trim();
+  if (!raw || /^●+$/.test(raw)) { toast('Please paste a valid API key.'); return; }
+  setGeminiKey(raw);
+  inp.value = '●'.repeat(16);
+  delete _tabBuilt['coach'];
+  toast('✅ API key saved! AI Coach is now active.');
+  buildProfileTab();
 }

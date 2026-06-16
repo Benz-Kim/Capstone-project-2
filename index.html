@@ -1,783 +1,361 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Future Planner</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="toast" id="toast"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Future Planner</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
 
-    <div class="shell">
-      <!-- ══════════ LOGIN ══════════ -->
-      <div class="screen active" id="s-login">
-        <div class="auth-wrap">
-          <div class="auth-head">
-            <div class="auth-logo">AI Future Planner</div>
-            <div class="auth-hl">Welcome back 👋</div>
-            <div class="auth-sub">Log in to continue your journey</div>
-          </div>
-          <div class="auth-body">
-            <button class="soc" onclick="socialLogin('Google')">
-              <svg width="18" height="18" viewBox="0 0 24 24">
-                <path
-                  fill="#4285F4"
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                />
-                <path
-                  fill="#34A853"
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                />
-                <path
-                  fill="#FBBC05"
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
-                />
-                <path
-                  fill="#EA4335"
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                />
+<div class="toast" id="toast"></div>
+
+<div class="shell">
+
+  <!-- ══════════ LOGIN ══════════ -->
+  <div class="screen active" id="s-login">
+    <div class="auth-wrap">
+      <div class="auth-head">
+        <div class="auth-logo">AI Future Planner</div>
+        <div class="auth-hl">Welcome back 👋</div>
+        <div class="auth-sub">Log in to continue your journey</div>
+      </div>
+      <div class="auth-body">
+        <button class="soc" onclick="socialLogin('Google')">
+          <svg width="18" height="18" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Continue with Google
+        </button>
+        <div class="div-line">or log in with ID</div>
+        <div class="fl">
+          <label class="flabel">ID</label>
+          <input class="inp" id="li-id" type="text" placeholder="Enter your ID" />
+        </div>
+        <div class="fl">
+          <label class="flabel">Password</label>
+          <div class="eyewrap">
+            <input class="inp" id="li-pw" type="password" placeholder="Enter your password"
+              onkeydown="if(event.key==='Enter') doLogin()" />
+            <button class="eyebtn" onclick="toggleEye('li-pw')" type="button">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
               </svg>
-              Continue with Google
-            </button>
-            <div class="div-line">or log in with ID</div>
-            <div class="fl">
-              <label class="flabel">ID</label>
-              <input
-                class="inp"
-                id="li-id"
-                type="text"
-                placeholder="Enter your ID"
-              />
-            </div>
-            <div class="fl">
-              <label class="flabel">Password</label>
-              <div class="eyewrap">
-                <input
-                  class="inp"
-                  id="li-pw"
-                  type="password"
-                  placeholder="Enter your password"
-                  onkeydown="if (event.key === 'Enter') doLogin();"
-                />
-                <button
-                  class="eyebtn"
-                  onclick="toggleEye('li-pw')"
-                  type="button"
-                >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                </button>
-              </div>
-              <div class="ferr" id="li-err">ID or password is incorrect.</div>
-            </div>
-            <button class="btn" onclick="doLogin()">Log in</button>
-            <div class="switch">
-              Don't have an account?
-              <a onclick="go('s-register')">Create one</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ══════════ REGISTER ══════════ -->
-      <div class="screen" id="s-register">
-        <div class="auth-wrap">
-          <div class="auth-head">
-            <div class="auth-logo">AI Future Planner</div>
-            <div class="auth-hl">Create an account ✨</div>
-            <div class="auth-sub">Tell us a bit about yourself</div>
-          </div>
-          <div class="auth-body">
-            <div class="fl">
-              <label class="flabel"
-                >Full name <span style="color: var(--red)">*</span></label
-              >
-              <input
-                class="inp"
-                id="r-name"
-                type="text"
-                placeholder="Enter your full name"
-              />
-              <div class="ferr" id="e-name">Please enter your name.</div>
-            </div>
-            <div class="fl">
-              <label class="flabel"
-                >ID <span style="color: var(--red)">*</span></label
-              >
-              <input
-                class="inp"
-                id="r-id"
-                type="text"
-                placeholder="4-20 letters or numbers"
-              />
-              <div class="ferr" id="e-id">
-                ID must be 4-20 letters or numbers.
-              </div>
-            </div>
-            <div class="fl">
-              <label class="flabel"
-                >Password <span style="color: var(--red)">*</span></label
-              >
-              <div class="eyewrap">
-                <input
-                  class="inp"
-                  id="r-pw"
-                  type="password"
-                  placeholder="At least 8 characters, include a number"
-                  oninput="checkPw()"
-                />
-                <button
-                  class="eyebtn"
-                  onclick="toggleEye('r-pw')"
-                  type="button"
-                >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                </button>
-              </div>
-              <div class="pwbar" id="pwbar"></div>
-              <div class="pwhint" id="pwhint"></div>
-              <div class="ferr" id="e-pw">
-                Must be at least 8 characters and include a number.
-              </div>
-            </div>
-            <div class="fl">
-              <label class="flabel"
-                >Confirm password
-                <span style="color: var(--red)">*</span></label
-              >
-              <div class="eyewrap">
-                <input
-                  class="inp"
-                  id="r-pw2"
-                  type="password"
-                  placeholder="Confirm password"
-                />
-                <button
-                  class="eyebtn"
-                  onclick="toggleEye('r-pw2')"
-                  type="button"
-                >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                </button>
-              </div>
-              <div class="ferr" id="e-pw2">Passwords do not match.</div>
-            </div>
-            <div class="fl">
-              <label class="flabel"
-                >Email <span style="color: var(--red)">*</span></label
-              >
-              <input
-                class="inp"
-                id="r-email"
-                type="email"
-                placeholder="example@email.com"
-              />
-              <div class="ferr" id="e-email">Please enter a valid email.</div>
-            </div>
-            <div class="fl">
-              <label class="flabel"
-                >Date of birth <span style="color: var(--red)">*</span></label
-              >
-              <div class="dob-row">
-                <input
-                  class="inp dob-input"
-                  id="r-dob-year"
-                  type="text"
-                  placeholder="YYYY"
-                  maxlength="4"
-                  inputmode="numeric"
-                  oninput="onYearInput(this)"
-                />
-                <span class="dob-sep">/</span>
-                <input
-                  class="inp dob-input"
-                  id="r-dob-month"
-                  type="text"
-                  placeholder="MM"
-                  maxlength="2"
-                  inputmode="numeric"
-                  oninput="onMonthInput(this)"
-                />
-                <span class="dob-sep">/</span>
-                <input
-                  class="inp dob-input"
-                  id="r-dob-day"
-                  type="text"
-                  placeholder="DD"
-                  maxlength="2"
-                  inputmode="numeric"
-                />
-              </div>
-              <div class="ferr" id="e-dob">Please enter a valid birth date (YYYY/MM/DD).</div>
-            </div>
-            <div class="fl">
-              <label class="flabel"
-                >Gender <span style="color: var(--red)">*</span></label
-              >
-              <div class="gndr">
-                <button class="gopt" id="g-m" onclick="selectGender('m')">
-                  Male
-                </button>
-                <button class="gopt" id="g-f" onclick="selectGender('f')">
-                  Female
-                </button>
-                <button class="gopt" id="g-o" onclick="selectGender('o')">
-                  Other
-                </button>
-              </div>
-              <div class="ferr" id="e-gender">Please select your gender.</div>
-            </div>
-            <button class="btn" onclick="doRegister()">Create account</button>
-            <div class="switch">
-              Already have an account? <a onclick="go('s-login')">Log in</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ══════════ OB 1: Grade ══════════ -->
-      <div class="screen" id="s-ob1">
-        <div class="ob-wrap">
-          <div class="ob-top">
-            <div class="ob-prog-row">
-              <div class="prog-track">
-                <div class="prog-fill" style="width: 16.6%"></div>
-              </div>
-              <span class="prog-label">1 / 6</span>
-            </div>
-            <div class="ob-q-num">Question 01</div>
-            <div class="ob-q">What grade are you currently in?</div>
-            <div class="ob-desc">
-              We'll design a study roadmap for your grade.
-            </div>
-          </div>
-          <div class="ob-body">
-            <div class="grade-list">
-              <div class="grade-item" onclick="selGrade('middle1', this)">
-                <span class="gi-dot"></span><span class="gi-label">G7</span>
-              </div>
-              <div class="grade-item" onclick="selGrade('middle2', this)">
-                <span class="gi-dot"></span><span class="gi-label">G8</span>
-              </div>
-              <div class="grade-item" onclick="selGrade('middle3', this)">
-                <span class="gi-dot"></span><span class="gi-label">G9</span>
-              </div>
-              <div class="grade-item" onclick="selGrade('high1', this)">
-                <span class="gi-dot"></span><span class="gi-label">G10</span>
-              </div>
-              <div class="grade-item" onclick="selGrade('high2', this)">
-                <span class="gi-dot"></span><span class="gi-label">G11</span>
-              </div>
-              <div class="grade-item" onclick="selGrade('high3', this)">
-                <span class="gi-dot"></span><span class="gi-label">G12</span>
-              </div>
-              <div class="grade-item" onclick="selGrade('univ', this)">
-                <span class="gi-dot"></span
-                ><span class="gi-label">College / Other</span>
-              </div>
-            </div>
-          </div>
-          <div class="ob-foot">
-            <button class="ob-next" id="next1" disabled onclick="goOb(2)">
-              Next →
             </button>
           </div>
+          <div class="ferr" id="li-err">ID or password is incorrect.</div>
         </div>
+        <button class="btn" onclick="doLogin()">Log in</button>
+        <div class="switch">Don't have an account? <a onclick="go('s-register')">Create one</a></div>
       </div>
+    </div>
+  </div>
 
-      <!-- ══════════ OB 2: Academic Track ══════════ -->
-      <div class="screen" id="s-ob2">
-        <div class="ob-wrap">
-          <div class="ob-top">
-            <div class="ob-prog-row">
-              <button class="back-btn" onclick="goOb(1)">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <polyline points="15 18 9 12 15 6" />
-                </svg>
-              </button>
-              <div class="prog-track">
-                <div class="prog-fill" style="width: 33.2%"></div>
-              </div>
-              <span class="prog-label">2 / 6</span>
-            </div>
-            <div class="ob-q-num">Question 02</div>
-            <div class="ob-q">What academic track are you aiming for?</div>
-            <div class="ob-desc">
-              We'll match subjects and skills to your career goals.
-            </div>
-          </div>
-          <div class="ob-body">
-            <div class="opt-grid">
-              <div class="opt-card" onclick="selTrack('science', this)">
-                <span class="oc-icon">🔬</span>
-                <div class="oc-label">Science & Engineering</div>
-                <div class="oc-sub">Science & Engineering</div>
-              </div>
-              <div class="opt-card" onclick="selTrack('medical', this)">
-                <span class="oc-icon">🏥</span>
-                <div class="oc-label">Medical / Pharmacy</div>
-                <div class="oc-sub">Medical / Pharmacy</div>
-              </div>
-              <div class="opt-card" onclick="selTrack('humanities', this)">
-                <span class="oc-icon">📚</span>
-                <div class="oc-label">Humanities / Social</div>
-                <div class="oc-sub">Humanities / Social</div>
-              </div>
-              <div class="opt-card" onclick="selTrack('arts', this)">
-                <span class="oc-icon">🎨</span>
-                <div class="oc-label">Arts & Performance</div>
-                <div class="oc-sub">Arts & Performance</div>
-              </div>
-              <div class="opt-card" onclick="selTrack('business', this)">
-                <span class="oc-icon">💼</span>
-                <div class="oc-label">Business & Economics</div>
-                <div class="oc-sub">Business & Economics</div>
-              </div>
-              <div class="opt-card" onclick="selTrack('abroad', this)">
-                <span class="oc-icon">✈️</span>
-                <div class="oc-label">Study Abroad</div>
-                <div class="oc-sub">Study Abroad</div>
-              </div>
-            </div>
-          </div>
-          <div class="ob-foot">
-            <button class="ob-next" id="next2" disabled onclick="goOb(3)">
-              Next →
-            </button>
-          </div>
+  <!-- ══════════ REGISTER ══════════ -->
+  <div class="screen" id="s-register">
+    <div class="auth-wrap">
+      <div class="auth-head">
+        <div class="auth-logo">AI Future Planner</div>
+        <div class="auth-hl">Create an account ✨</div>
+        <div class="auth-sub">Tell us a bit about yourself</div>
+      </div>
+      <div class="auth-body">
+        <div class="fl">
+          <label class="flabel">Full name <span style="color:var(--red)">*</span></label>
+          <input class="inp" id="r-name" type="text" placeholder="Enter your full name" />
+          <div class="ferr" id="e-name">Please enter your name.</div>
         </div>
-      </div>
-
-      <!-- ══════════ OB 3: Final Goal ══════════ -->
-      <div class="screen" id="s-ob3">
-        <div class="ob-wrap">
-          <div class="ob-top">
-            <div class="ob-prog-row">
-              <button class="back-btn" onclick="goOb(2)">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <polyline points="15 18 9 12 15 6" />
-                </svg>
-              </button>
-              <div class="prog-track">
-                <div class="prog-fill" style="width: 49.8%"></div>
-              </div>
-              <span class="prog-label">3 / 6</span>
-            </div>
-            <div class="ob-q-num">Question 03</div>
-            <div class="ob-q">What is your final goal?</div>
-            <div class="ob-desc">
-              The more specific, the more accurate the roadmap.
-            </div>
-          </div>
-          <div class="ob-body">
-            <input
-              class="goal-inp"
-              id="ob-goal"
-              type="text"
-              placeholder="e.g. Admission to MIT CS, medical school..."
-              oninput="onGoalInput()"
-            />
-            <div class="preset-title">Suggested goal examples</div>
-            <div class="preset-wrap" id="preset-wrap"></div>
-          </div>
-          <div class="ob-foot">
-            <button class="ob-next" id="next3" disabled onclick="goOb(4)">
-              Next →
-            </button>
-          </div>
+        <div class="fl">
+          <label class="flabel">ID <span style="color:var(--red)">*</span></label>
+          <input class="inp" id="r-id" type="text" placeholder="4-20 letters or numbers" />
+          <div class="ferr" id="e-id">ID must be 4-20 letters or numbers.</div>
         </div>
-      </div>
-
-      <!-- ══════════ OB 4: Target Date ══════════ -->
-      <div class="screen" id="s-ob4">
-        <div class="ob-wrap">
-          <div class="ob-top">
-            <div class="ob-prog-row">
-              <button class="back-btn" onclick="goOb(3)">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <polyline points="15 18 9 12 15 6" />
-                </svg>
-              </button>
-              <div class="prog-track">
-                <div class="prog-fill" style="width: 66.4%"></div>
-              </div>
-              <span class="prog-label">4 / 6</span>
-            </div>
-            <div class="ob-q-num">Question 04</div>
-            <div class="ob-q">By when do you want to achieve your goal?</div>
-            <div class="ob-desc">
-              We will set milestones based on a realistic timeline.
-            </div>
-          </div>
-          <div class="ob-body">
-            <div class="year-grid" id="year-grid"></div>
-            <div class="sem-label">Target period</div>
-            <div class="sem-row">
-              <button class="sem-btn" onclick="pickSem('First half', this)">
-                First half (Jan–Jun)
-              </button>
-              <button class="sem-btn" onclick="pickSem('Second half', this)">
-                Second half (Jul–Dec)
-              </button>
-            </div>
-          </div>
-          <div class="ob-foot">
-            <button class="ob-next" id="next4" disabled onclick="goOb(5)">
-              Next →
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ══════════ OB 5: Current Level ══════════ -->
-      <div class="screen" id="s-ob5">
-        <div class="ob-wrap">
-          <div class="ob-top">
-            <div class="ob-prog-row">
-              <button class="back-btn" onclick="goOb(4)">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <polyline points="15 18 9 12 15 6" />
-                </svg>
-              </button>
-              <div class="prog-track">
-                <div class="prog-fill" style="width: 83%"></div>
-              </div>
-              <span class="prog-label">5 / 6</span>
-            </div>
-            <div class="ob-q-num">Question 05</div>
-            <div class="ob-q">What is your current level in each subject?</div>
-            <div class="ob-desc">Be honest so we can create a better plan.</div>
-          </div>
-          <div class="ob-body" id="level-body"></div>
-          <div class="ob-foot">
-            <button class="ob-next" id="next5" onclick="goOb(6)">Next →</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ══════════ OB 6: Daily Study Hours ══════════ -->
-      <div class="screen" id="s-ob6">
-        <div class="ob-wrap">
-          <div class="ob-top">
-            <div class="ob-prog-row">
-              <button class="back-btn" onclick="goOb(5)">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <polyline points="15 18 9 12 15 6" />
-                </svg>
-              </button>
-              <div class="prog-track">
-                <div class="prog-fill" style="width: 100%"></div>
-              </div>
-              <span class="prog-label">6 / 6</span>
-            </div>
-            <div class="ob-q-num">Question 06</div>
-            <div class="ob-q">How many hours can you study each day?</div>
-            <div class="ob-desc">
-              Set a realistic amount so you can maintain it.
-            </div>
-          </div>
-          <div class="ob-body">
-            <div class="hours-list">
-              <div class="hour-card" onclick="selHours('1-2 hours', this)">
-                <span class="hc-icon">🌱</span>
-                <div>
-                  <div class="hc-main">1-2 hours</div>
-                  <div class="hc-sub">Light start · build basics</div>
-                </div>
-              </div>
-              <div class="hour-card" onclick="selHours('3-4 hours', this)">
-                <span class="hc-icon">📖</span>
-                <div>
-                  <div class="hc-main">3-4 hours</div>
-                  <div class="hc-sub">Standard study · steady growth</div>
-                </div>
-              </div>
-              <div class="hour-card" onclick="selHours('5-6 hours', this)">
-                <span class="hc-icon">🔥</span>
-                <div>
-                  <div class="hc-main">5-6 hours</div>
-                  <div class="hc-sub">Focused mode · fast progress</div>
-                </div>
-              </div>
-              <div class="hour-card" onclick="selHours('7+ hours', this)">
-                <span class="hc-icon">⚡</span>
-                <div>
-                  <div class="hc-main">7+ hours</div>
-                  <div class="hc-sub">Exam mode · high intensity</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="ob-foot">
-            <button
-              class="ob-next"
-              id="next6"
-              disabled
-              onclick="startAnalyzing()"
-            >
-              Start Analysis →
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ══════════ ANALYZING ══════════ -->
-      <div class="screen" id="s-analyzing">
-        <div class="analyzing-wrap">
-          <div class="an-icon">🤖</div>
-          <div class="an-title">AI is analyzing your profile</div>
-          <div class="an-sub">
-            Designing personalized milestones based on your input
-          </div>
-          <div class="an-steps">
-            <div class="an-step" id="an1">
-              <span class="an-step-icon">🎯</span
-              ><span class="an-step-txt">Analyzing goal and track...</span>
-            </div>
-            <div class="an-step" id="an2">
-              <span class="an-step-icon">📅</span
-              ><span class="an-step-txt">Calculating timeline...</span>
-            </div>
-            <div class="an-step" id="an3">
-              <span class="an-step-icon">📊</span
-              ><span class="an-step-txt">Evaluating current level...</span>
-            </div>
-            <div class="an-step" id="an4">
-              <span class="an-step-icon">🗺️</span
-              ><span class="an-step-txt">Creating milestones...</span>
-            </div>
-            <div class="an-step" id="an5">
-              <span class="an-step-icon">✅</span
-              ><span class="an-step-txt">Building daily study plan...</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ══════════ DASHBOARD ══════════ -->
-      <div class="screen" id="s-dashboard">
-        <div class="top-nav">
-          <div class="avatar" id="d-avatar">HJ</div>
-          <div class="greet">
-            <div class="gnm" id="d-name">Hi 👋</div>
-            <div class="gdt" id="d-date"></div>
-          </div>
-          <div class="nav-icons">
-            <span class="ni">
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        <div class="fl">
+          <label class="flabel">Password <span style="color:var(--red)">*</span></label>
+          <div class="eyewrap">
+            <input class="inp" id="r-pw" type="password" placeholder="At least 8 characters, include a number" oninput="checkPw()" />
+            <button class="eyebtn" onclick="toggleEye('r-pw')" type="button">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
               </svg>
-              <span class="ndot"></span>
-            </span>
-            <span class="ni" onclick="openSettings()">
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <circle cx="12" cy="12" r="3" />
-                <path
-                  d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
-                />
-              </svg>
-            </span>
-            <span class="ni" onclick="doLogout()">
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <polyline points="16 17 21 12 16 7" />
-                <line x1="21" y1="12" x2="9" y2="12" />
-              </svg>
-            </span>
+            </button>
           </div>
+          <div class="pwbar" id="pwbar"></div>
+          <div class="pwhint" id="pwhint"></div>
+          <div class="ferr" id="e-pw">Must be at least 8 characters and include a number.</div>
         </div>
+        <div class="fl">
+          <label class="flabel">Confirm password <span style="color:var(--red)">*</span></label>
+          <div class="eyewrap">
+            <input class="inp" id="r-pw2" type="password" placeholder="Confirm password" />
+            <button class="eyebtn" onclick="toggleEye('r-pw2')" type="button">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <div class="ferr" id="e-pw2">Passwords do not match.</div>
+        </div>
+        <div class="fl">
+          <label class="flabel">Email <span style="color:var(--red)">*</span></label>
+          <input class="inp" id="r-email" type="email" placeholder="example@email.com" />
+          <div class="ferr" id="e-email">Please enter a valid email.</div>
+        </div>
+        <div class="fl">
+          <label class="flabel">Date of birth <span style="color:var(--red)">*</span></label>
+          <input class="inp" id="r-dob" type="date" />
+          <div class="ferr" id="e-dob">Please enter your birth date.</div>
+        </div>
+        <div class="fl">
+          <label class="flabel">Gender <span style="color:var(--red)">*</span></label>
+          <div class="gndr">
+            <button class="gopt" id="g-m" onclick="selectGender('m')">Male</button>
+            <button class="gopt" id="g-f" onclick="selectGender('f')">Female</button>
+            <button class="gopt" id="g-o" onclick="selectGender('o')">Other</button>
+          </div>
+          <div class="ferr" id="e-gender">Please select your gender.</div>
+        </div>
+        <button class="btn" onclick="doRegister()">Create account</button>
+        <div class="switch">Already have an account? <a onclick="go('s-login')">Log in</a></div>
+      </div>
+    </div>
+  </div>
 
+  <!-- ══════════ OB 1: Grade ══════════ -->
+  <div class="screen" id="s-ob1">
+    <div class="ob-wrap">
+      <div class="ob-top">
+        <div class="ob-prog-row">
+          <div class="prog-track"><div class="prog-fill" style="width:16.6%"></div></div>
+          <span class="prog-label">1 / 6</span>
+        </div>
+        <div class="ob-q-num">Question 01</div>
+        <div class="ob-q">What grade are you currently in?</div>
+        <div class="ob-desc">We'll design a study roadmap for your grade.</div>
+      </div>
+      <div class="ob-body">
+        <div class="grade-list">
+          <div class="grade-item" onclick="selGrade('middle1', this)"><span class="gi-dot"></span><span class="gi-label">G7</span></div>
+          <div class="grade-item" onclick="selGrade('middle2', this)"><span class="gi-dot"></span><span class="gi-label">G8</span></div>
+          <div class="grade-item" onclick="selGrade('middle3', this)"><span class="gi-dot"></span><span class="gi-label">G9</span></div>
+          <div class="grade-item" onclick="selGrade('high1',   this)"><span class="gi-dot"></span><span class="gi-label">G10</span></div>
+          <div class="grade-item" onclick="selGrade('high2',   this)"><span class="gi-dot"></span><span class="gi-label">G11</span></div>
+          <div class="grade-item" onclick="selGrade('high3',   this)"><span class="gi-dot"></span><span class="gi-label">G12</span></div>
+          <div class="grade-item" onclick="selGrade('univ',    this)"><span class="gi-dot"></span><span class="gi-label">College / Other</span></div>
+        </div>
+      </div>
+      <div class="ob-foot"><button class="ob-next" id="next1" disabled onclick="goOb(2)">Next →</button></div>
+    </div>
+  </div>
+
+  <!-- ══════════ OB 2: Academic Track ══════════ -->
+  <div class="screen" id="s-ob2">
+    <div class="ob-wrap">
+      <div class="ob-top">
+        <div class="ob-prog-row">
+          <button class="back-btn" onclick="goOb(1)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div class="prog-track"><div class="prog-fill" style="width:33.2%"></div></div>
+          <span class="prog-label">2 / 6</span>
+        </div>
+        <div class="ob-q-num">Question 02</div>
+        <div class="ob-q">What academic track are you aiming for?</div>
+        <div class="ob-desc">We'll match subjects and skills to your career goals.</div>
+      </div>
+      <div class="ob-body">
+        <div class="opt-grid">
+          <div class="opt-card" onclick="selTrack('science',    this)"><span class="oc-icon">🔬</span><div class="oc-label">Science & Engineering</div><div class="oc-sub">Science & Engineering</div></div>
+          <div class="opt-card" onclick="selTrack('medical',    this)"><span class="oc-icon">🏥</span><div class="oc-label">Medical / Pharmacy</div><div class="oc-sub">Medical / Pharmacy</div></div>
+          <div class="opt-card" onclick="selTrack('humanities', this)"><span class="oc-icon">📚</span><div class="oc-label">Humanities / Social</div><div class="oc-sub">Humanities / Social</div></div>
+          <div class="opt-card" onclick="selTrack('arts',       this)"><span class="oc-icon">🎨</span><div class="oc-label">Arts & Performance</div><div class="oc-sub">Arts & Performance</div></div>
+          <div class="opt-card" onclick="selTrack('business',   this)"><span class="oc-icon">💼</span><div class="oc-label">Business & Economics</div><div class="oc-sub">Business & Economics</div></div>
+          <div class="opt-card" onclick="selTrack('abroad',     this)"><span class="oc-icon">✈️</span><div class="oc-label">Study Abroad</div><div class="oc-sub">Study Abroad</div></div>
+        </div>
+      </div>
+      <div class="ob-foot"><button class="ob-next" id="next2" disabled onclick="goOb(3)">Next →</button></div>
+    </div>
+  </div>
+
+  <!-- ══════════ OB 3: Final Goal ══════════ -->
+  <div class="screen" id="s-ob3">
+    <div class="ob-wrap">
+      <div class="ob-top">
+        <div class="ob-prog-row">
+          <button class="back-btn" onclick="goOb(2)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div class="prog-track"><div class="prog-fill" style="width:49.8%"></div></div>
+          <span class="prog-label">3 / 6</span>
+        </div>
+        <div class="ob-q-num">Question 03</div>
+        <div class="ob-q">What is your final goal?</div>
+        <div class="ob-desc">The more specific, the more accurate the roadmap.</div>
+      </div>
+      <div class="ob-body">
+        <input class="goal-inp" id="ob-goal" type="text" placeholder="e.g. Admission to MIT CS, medical school..." oninput="onGoalInput()" />
+        <div class="preset-title">Suggested goal examples</div>
+        <div class="preset-wrap" id="preset-wrap"></div>
+      </div>
+      <div class="ob-foot"><button class="ob-next" id="next3" disabled onclick="goOb(4)">Next →</button></div>
+    </div>
+  </div>
+
+  <!-- ══════════ OB 4: Target Date ══════════ -->
+  <div class="screen" id="s-ob4">
+    <div class="ob-wrap">
+      <div class="ob-top">
+        <div class="ob-prog-row">
+          <button class="back-btn" onclick="goOb(3)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div class="prog-track"><div class="prog-fill" style="width:66.4%"></div></div>
+          <span class="prog-label">4 / 6</span>
+        </div>
+        <div class="ob-q-num">Question 04</div>
+        <div class="ob-q">By when do you want to achieve your goal?</div>
+        <div class="ob-desc">We will set milestones based on a realistic timeline.</div>
+      </div>
+      <div class="ob-body">
+        <div class="year-grid" id="year-grid"></div>
+        <div class="sem-label">Target period</div>
+        <div class="sem-row">
+          <button class="sem-btn" onclick="pickSem('First half', this)">First half (Jan–Jun)</button>
+          <button class="sem-btn" onclick="pickSem('Second half', this)">Second half (Jul–Dec)</button>
+        </div>
+      </div>
+      <div class="ob-foot"><button class="ob-next" id="next4" disabled onclick="goOb(5)">Next →</button></div>
+    </div>
+  </div>
+
+  <!-- ══════════ OB 5: Current Level ══════════ -->
+  <div class="screen" id="s-ob5">
+    <div class="ob-wrap">
+      <div class="ob-top">
+        <div class="ob-prog-row">
+          <button class="back-btn" onclick="goOb(4)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div class="prog-track"><div class="prog-fill" style="width:83%"></div></div>
+          <span class="prog-label">5 / 6</span>
+        </div>
+        <div class="ob-q-num">Question 05</div>
+        <div class="ob-q">What is your current level in each subject?</div>
+        <div class="ob-desc">Be honest so we can create a better plan.</div>
+      </div>
+      <div class="ob-body" id="level-body"></div>
+      <div class="ob-foot"><button class="ob-next" id="next5" onclick="goOb(6)">Next →</button></div>
+    </div>
+  </div>
+
+  <!-- ══════════ OB 6: Daily Study Hours ══════════ -->
+  <div class="screen" id="s-ob6">
+    <div class="ob-wrap">
+      <div class="ob-top">
+        <div class="ob-prog-row">
+          <button class="back-btn" onclick="goOb(5)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div class="prog-track"><div class="prog-fill" style="width:100%"></div></div>
+          <span class="prog-label">6 / 6</span>
+        </div>
+        <div class="ob-q-num">Question 06</div>
+        <div class="ob-q">How many hours can you study each day?</div>
+        <div class="ob-desc">Set a realistic amount so you can maintain it.</div>
+      </div>
+      <div class="ob-body">
+        <div class="hours-list">
+          <div class="hour-card" onclick="selHours('1-2 hours', this)"><span class="hc-icon">🌱</span><div><div class="hc-main">1-2 hours</div><div class="hc-sub">Light start · build basics</div></div></div>
+          <div class="hour-card" onclick="selHours('3-4 hours', this)"><span class="hc-icon">📖</span><div><div class="hc-main">3-4 hours</div><div class="hc-sub">Standard study · steady growth</div></div></div>
+          <div class="hour-card" onclick="selHours('5-6 hours', this)"><span class="hc-icon">🔥</span><div><div class="hc-main">5-6 hours</div><div class="hc-sub">Focused mode · fast progress</div></div></div>
+          <div class="hour-card" onclick="selHours('7+ hours', this)"><span class="hc-icon">⚡</span><div><div class="hc-main">7+ hours</div><div class="hc-sub">Exam mode · high intensity</div></div></div>
+        </div>
+      </div>
+      <div class="ob-foot"><button class="ob-next" id="next6" disabled onclick="startAnalyzing()">Start Analysis →</button></div>
+    </div>
+  </div>
+
+  <!-- ══════════ ANALYZING ══════════ -->
+  <div class="screen" id="s-analyzing">
+    <div class="analyzing-wrap">
+      <div class="an-icon">🤖</div>
+      <div class="an-title">AI is analyzing your profile</div>
+      <div class="an-sub">Designing personalized milestones based on your input</div>
+      <div class="an-steps">
+        <div class="an-step" id="an1"><span class="an-step-icon">🎯</span><span class="an-step-txt">Analyzing goal and track...</span></div>
+        <div class="an-step" id="an2"><span class="an-step-icon">📅</span><span class="an-step-txt">Calculating timeline...</span></div>
+        <div class="an-step" id="an3"><span class="an-step-icon">📊</span><span class="an-step-txt">Evaluating current level...</span></div>
+        <div class="an-step" id="an4"><span class="an-step-icon">🗺️</span><span class="an-step-txt">Creating milestones...</span></div>
+        <div class="an-step" id="an5"><span class="an-step-icon">✅</span><span class="an-step-txt">Building daily study plan...</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ DASHBOARD ══════════ -->
+  <div class="screen" id="s-dashboard">
+
+    <!-- Top Nav -->
+    <div class="top-nav">
+      <div class="avatar" id="d-avatar">HJ</div>
+      <div class="greet">
+        <div class="gnm" id="d-name">Hi 👋</div>
+        <div class="gdt" id="d-date"></div>
+      </div>
+      <div class="nav-icons">
+        <span class="ni">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="ndot"></span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Tab Pane Wrapper -->
+    <div class="tab-panes-wrap">
+
+      <!-- ── Home ── -->
+      <div class="tab-pane active" id="tp-home">
         <div class="dash-body">
-          <!-- Final Goal -->
           <div class="card goal-card">
             <div class="gchip">final goal</div>
             <div class="gtitle" id="d-goal-title">My Goal</div>
-            <div class="gsub" id="d-goal-sub">Track · Target</div>
+            <div class="gsub"   id="d-goal-sub">Track · Target</div>
             <button class="gexpbtn" id="gexpbtn" onclick="toggleGoal()">
-              <span class="gchev">
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#B5D4F4"
-                  stroke-width="2.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </span>
+              <span class="gchev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B5D4F4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
               <span id="gexplbl">see details</span>
             </button>
             <div class="gdet" id="gdet">
               <div class="gdet-inner">
-                <div
-                  style="
-                    font-size: 11px;
-                    color: rgba(255, 255, 255, 0.65);
-                    margin-bottom: 6px;
-                  "
-                >
-                  required capabilities
-                </div>
+                <div style="font-size:11px;color:rgba(255,255,255,.65);margin-bottom:6px;">required capabilities</div>
                 <div id="d-caps"></div>
                 <div class="gstat-row" id="d-stats"></div>
               </div>
             </div>
           </div>
 
-          <!-- Stepping Stones -->
           <div class="card">
             <div class="slbl">stepping stones to your goal</div>
-            <div class="stones-scroll">
-              <div class="stones-track" id="d-stones"></div>
-            </div>
+            <div class="stones-scroll"><div class="stones-track" id="d-stones"></div></div>
           </div>
 
-          <!-- Milestone Bars -->
           <div class="card">
             <div class="slbl">milestone progress</div>
             <div id="d-bars"></div>
           </div>
 
-          <!-- Today's Tasks -->
           <div class="card">
             <div class="tasks-hdr">
               <div class="ttl">Today's tasks</div>
               <button class="addbtn" onclick="toggleAdd()">
-                <svg
-                  width="13"
-                  height="13"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                  stroke-linecap="round"
-                >
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 add task
               </button>
             </div>
             <div id="d-tasks"></div>
             <div class="addarea" id="addarea">
-              <input
-                type="text"
-                id="newt"
-                placeholder="new task name..."
-                onkeydown="if (event.key === 'Enter') addTask();"
-              />
+              <input type="text" id="newt" placeholder="new task name..." onkeydown="if(event.key==='Enter') addTask()" />
               <select id="new-subject">
                 <option value="s-math">Math</option>
                 <option value="s-cs">CS</option>
@@ -789,182 +367,109 @@
               </select>
               <button onclick="addTask()">add</button>
             </div>
-            <div
-              style="
-                margin-top: 10px;
-                font-size: 12px;
-                color: var(--t2);
-                text-align: center;
-              "
-              id="t-summary"
-            ></div>
+            <div style="margin-top:10px;font-size:12px;color:var(--t2);text-align:center;" id="t-summary"></div>
           </div>
 
-          <!-- Bible Verse -->
           <div class="card verse-card">
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#534AB7"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-              <path
-                d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"
-              />
-            </svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
             <div class="verse-txt" id="verse-txt"></div>
             <div class="verse-ref" id="verse-ref"></div>
           </div>
-          <div style="height: 8px"></div>
-        </div>
-
-        <!-- AI Chat -->
-        <div class="chat-btm">
-          <div class="chat-prev" id="chat-prev">
-            Your AI coach has prepared a custom plan! Ask anything 🎯
-          </div>
-          <div class="chat-row">
-            <input
-              type="text"
-              id="chat-in"
-              placeholder="Ask the AI coach..."
-              onkeydown="if (event.key === 'Enter') sendChat();"
-            />
-            <button class="chat-send" onclick="sendChat()">
-              <svg
-                width="17"
-                height="17"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#fff"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <line x1="22" y1="2" x2="11" y2="13" />
-                <polygon points="22 2 15 22 11 13 2 9 22 2" />
-              </svg>
-            </button>
-          </div>
+          <div style="height:8px;"></div>
         </div>
       </div>
-      <!-- /s-dashboard -->
 
-      <!-- ══════════ SETTINGS MODAL ══════════ -->
-      <div
-        class="modal-overlay"
-        id="settings-modal-overlay"
-        onclick="closeSettings(event)"
-      >
-        <div class="modal-content" onclick="event.stopPropagation()">
-          <div class="modal-header">
-            <div class="modal-title">Settings</div>
-            <button class="modal-close" onclick="closeSettings()">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-          </div>
+      <!-- ── Roadmap ── -->
+      <div class="tab-pane" id="tp-roadmap">
+        <div class="tab-header">
+          <div class="th-title">My Roadmap</div>
+          <div class="th-sub" id="rm-sub">Loading…</div>
+        </div>
+        <div class="tab-scroll" id="roadmap-body"></div>
+      </div>
 
-          <div class="modal-body">
-            <!-- Account Info -->
-            <div class="setting-section">
-              <div class="setting-item" onclick="viewAccountInfo()">
-                <div class="setting-icon">👤</div>
-                <div class="setting-text">
-                  <div class="setting-name">Account Info</div>
-                  <div class="setting-desc">View and edit profile details</div>
-                </div>
-                <div class="setting-arrow">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            <!-- Profile Picture -->
-            <div class="setting-section">
-              <div class="setting-item" onclick="changeProfilePicture()">
-                <div class="setting-icon">📷</div>
-                <div class="setting-text">
-                  <div class="setting-name">Change Profile Picture</div>
-                  <div class="setting-desc">Update your profile photo</div>
-                </div>
-                <div class="setting-arrow">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            <!-- Appearance -->
-            <div class="setting-section">
-              <div class="setting-item">
-                <div class="setting-icon">🎨</div>
-                <div class="setting-text">
-                  <div class="setting-name">Appearance</div>
-                  <div class="setting-desc">Light / Dark mode</div>
-                </div>
-                <div class="setting-toggle">
-                  <input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode()">
-                  <label for="dark-mode-toggle"></label>
-                </div>
-              </div>
-            </div>
-
-            <!-- Divider -->
-            <div class="setting-divider"></div>
-
-            <!-- Delete Account -->
-            <div class="setting-section">
-              <div class="setting-item danger" onclick="deleteAccount()">
-                <div class="setting-icon">🗑️</div>
-                <div class="setting-text">
-                  <div class="setting-name">Delete Account</div>
-                  <div class="setting-desc">Permanently delete your account</div>
-                </div>
-                <div class="setting-arrow">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="modal-footer">
-            <button class="btn-cancel" onclick="closeSettings()">Close</button>
+      <!-- ── AI Coach ── -->
+      <div class="tab-pane coach-pane" id="tp-coach">
+        <div class="coach-header">
+          <div class="coach-avatar-icon">🤖</div>
+          <div>
+            <div class="coach-title">AI Study Coach</div>
+            <div class="coach-status" id="coach-status">Powered by Gemini</div>
           </div>
         </div>
+        <div class="coach-messages" id="coach-messages"></div>
+        <div class="coach-input-wrap">
+          <input type="text" id="coach-in" placeholder="Ask your AI coach…"
+                 onkeydown="if(event.key==='Enter') sendCoachMessage()" />
+          <button class="chat-send" onclick="sendCoachMessage()">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
       </div>
-      <!-- /settings-modal -->
+
+      <!-- ── Progress ── -->
+      <div class="tab-pane" id="tp-progress">
+        <div class="tab-header">
+          <div class="th-title">Progress</div>
+          <div class="th-sub">Track your consistency</div>
+        </div>
+        <div class="tab-scroll" id="progress-body"></div>
+      </div>
+
+      <!-- ── Profile ── -->
+      <div class="tab-pane" id="tp-profile">
+        <div class="tab-scroll" id="profile-body"></div>
+      </div>
+
+    </div><!-- /tab-panes-wrap -->
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <button class="bn-tab active" data-tab="home" onclick="switchTab('home')">
+        <span class="bn-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </span>
+        <span class="bn-lbl">Home</span>
+      </button>
+      <button class="bn-tab" data-tab="roadmap" onclick="switchTab('roadmap')">
+        <span class="bn-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+        </span>
+        <span class="bn-lbl">Roadmap</span>
+      </button>
+      <button class="bn-tab bn-center" data-tab="coach" onclick="switchTab('coach')">
+        <span class="bn-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4c0 1.5-.8 2.8-2 3.5V11h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2h2V9.5C8.8 8.8 8 7.5 8 6a4 4 0 0 1 4-4z"/><circle cx="12" cy="6" r="1.5" fill="currentColor"/></svg>
+        </span>
+        <span class="bn-lbl">AI Coach</span>
+      </button>
+      <button class="bn-tab" data-tab="progress" onclick="switchTab('progress')">
+        <span class="bn-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </span>
+        <span class="bn-lbl">Progress</span>
+      </button>
+      <button class="bn-tab" data-tab="profile" onclick="switchTab('profile')">
+        <span class="bn-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </span>
+        <span class="bn-lbl">Profile</span>
+      </button>
     </div>
-    <!-- /shell -->
 
-    <!-- Scripts — order matters: data → utils → auth → onboarding → dashboard → main -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="js/data.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/onboarding.js"></script>
-    <script src="js/dashboard.js"></script>
-    <script src="js/main.js"></script>
-  </body>
+  </div><!-- /s-dashboard -->
+
+</div><!-- /shell -->
+
+<!-- Scripts — order matters: data → utils → ai → auth → onboarding → dashboard → main -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="js/data.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/onboarding.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/main.js"></script>
+
+</body>
 </html>
