@@ -30,10 +30,10 @@
           </svg>
           Continue with Google
         </button>
-        <div class="div-line">or log in with ID</div>
+        <div class="div-line">or log in with email</div>
         <div class="fl">
-          <label class="flabel">ID</label>
-          <input class="inp" id="li-id" type="text" placeholder="Enter your ID" />
+          <label class="flabel">Email</label>
+          <input class="inp" id="li-email" type="email" placeholder="Enter your email" />
         </div>
         <div class="fl">
           <label class="flabel">Password</label>
@@ -461,10 +461,13 @@
 
 </div><!-- /shell -->
 
-<!-- Scripts — order matters: data → utils → ai → auth → onboarding → dashboard → main -->
-<script src="https://accounts.google.com/gsi/client" async defer></script>
+<!-- Scripts — order matters -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
 <script src="js/data.js"></script>
 <script src="js/utils.js"></script>
+<script src="js/supabase.js"></script>
+<script src="js/db.js"></script>
 <script src="js/ai.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/onboarding.js"></script>

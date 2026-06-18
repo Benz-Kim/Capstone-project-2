@@ -3,7 +3,6 @@
    onboarding.js — 6-step onboarding flow
    ═══════════════════════════════════ */
 
-/* ── State ── */
 let obData = { grade: '', track: '', goal: '', year: '', sem: '', level: {}, hours: '' };
 let selYear = '';
 let selSem  = '';
@@ -14,7 +13,6 @@ function resetObData() {
   selSem  = '';
 }
 
-/* ── Navigation ── */
 function goOb(step) {
   go('s-ob' + step);
   if (step === 3) buildPresets();
@@ -22,7 +20,6 @@ function goOb(step) {
   if (step === 5) buildLevels();
 }
 
-/* ── Step 1: Grade ── */
 function selGrade(val, el) {
   obData.grade = val;
   document.querySelectorAll('#s-ob1 .grade-item').forEach(e => e.classList.remove('sel'));
@@ -30,7 +27,6 @@ function selGrade(val, el) {
   document.getElementById('next1').disabled = false;
 }
 
-/* ── Step 2: Track ── */
 function selTrack(val, el) {
   obData.track = val;
   document.querySelectorAll('#s-ob2 .opt-card').forEach(e => e.classList.remove('sel'));
@@ -38,7 +34,6 @@ function selTrack(val, el) {
   document.getElementById('next2').disabled = false;
 }
 
-/* ── Step 3: Goal ── */
 function buildPresets() {
   const list = TRACK_PRESETS[obData.track] || TRACK_PRESETS['abroad'];
   document.getElementById('preset-wrap').innerHTML = list
@@ -55,7 +50,6 @@ function onGoalInput() {
   document.getElementById('next3').disabled = !document.getElementById('ob-goal').value.trim();
 }
 
-/* ── Step 4: Target date ── */
 function buildYears() {
   const now  = new Date().getFullYear();
   const grid = document.getElementById('year-grid');
@@ -89,7 +83,6 @@ function checkYearSem() {
   }
 }
 
-/* ── Step 5: Current level ── */
 function buildLevels() {
   const subjects = TRACK_SUBJECTS[obData.track] || TRACK_SUBJECTS['abroad'];
   let html = '<div style="padding:0 0 12px;">';
@@ -124,7 +117,6 @@ function setLevel(btn) {
   document.getElementById('lv-' + subj).textContent = LVL_LABELS[n - 1];
 }
 
-/* ── Step 6: Daily hours ── */
 function selHours(val, el) {
   obData.hours = val;
   document.querySelectorAll('.hour-card').forEach(c => c.classList.remove('sel'));
@@ -132,7 +124,6 @@ function selHours(val, el) {
   document.getElementById('next6').disabled = false;
 }
 
-/* ── Analyzing & finalize ── */
 function startAnalyzing() {
   obData.goal = document.getElementById('ob-goal').value.trim();
   go('s-analyzing');
@@ -141,17 +132,36 @@ function startAnalyzing() {
     setTimeout(() => document.getElementById(id).classList.add('done'), 700 * (i + 1));
   });
 
-  setTimeout(finalizeOnboarding, 4200);
+  finalizeOnboarding(Date.now());
 }
 
-function finalizeOnboarding() {
-  if (session) {
-    session.obData    = obData;
-    session.onboarded = true;
-    const idx = users.findIndex(u => u.id === session.id);
-    if (idx >= 0) { users[idx] = session; localStorage.setItem('afp_users', JSON.stringify(users)); }
-    localStorage.setItem('afp_sess', JSON.stringify(session));
+async function finalizeOnboarding(startTime) {
+  if (!session) return;
+
+  const elapsed = Date.now() - (startTime || 0);
+  const remaining = Math.max(0, 4200 - elapsed);
+  if (remaining) await new Promise(r => setTimeout(r, remaining));
+
+  session.obData = obData;
+  session.onboarded = true;
+
+  try {
+    if (session.id && getSupabase()) {
+      await saveOnboardingProfile(session.id, obData);
+
+      const result = await generateRoadmapViaEdge(obData);
+      if (!result.ok) {
+        console.warn('Roadmap generation fallback:', result.error);
+      }
+      await loadDashboardData(session.id, obData.track || 'abroad');
+    } else {
+      localStorage.setItem('afp_sess', JSON.stringify(session));
+    }
+  } catch (e) {
+    console.warn('Onboarding save error:', e);
+    await loadDashboardData(session.id, obData.track || 'abroad');
   }
-  buildDashboard(session);
+
+  await buildDashboard(session);
   go('s-dashboard');
 }
