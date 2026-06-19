@@ -1,129 +1,104 @@
 
 /* ═══════════════════════════════════
-   auth.js — Login, Register, Logout
+   auth.js — Supabase Auth (Google + email/password)
    ═══════════════════════════════════ */
 
-/* ── State ── */
-let users   = JSON.parse(localStorage.getItem('afp_users') || '[]');
-let session = null;  // populated by main.js after data is ready
+let session = null;
 let selGender = '';
-let googleTokenClient = null;
 
-const SOCIAL_AUTH = {
-  googleClientId: '999502593757-qhl0jkggg01k56bb0nlsmbbu06ehslvr.apps.googleusercontent.com',
-};
-
-function socialAuthReady() {
-  return location.protocol !== 'file:' && !!SOCIAL_AUTH.googleClientId;
+function authReady() {
+  return isSupabaseConfigured() && !!getSupabase();
 }
 
 function providerLoginHint(provider) {
+  if (!authReady()) {
+    toast('Set your Supabase anon key in js/config.js first.');
+    return true;
+  }
   if (location.protocol === 'file:') {
-    toast(`${provider} login needs the app to run from http://localhost or a hosted domain.`);
+    toast(`${provider} login needs http://localhost or a hosted domain.`);
     return true;
   }
   return false;
 }
 
-function providerUserId(provider, value) {
-  return `${provider.toLowerCase()}_${value}`;
-}
-
-function decodeJwt(token) {
-  const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-  const json = decodeURIComponent(atob(payload).split('').map(char => `%${('00' + char.charCodeAt(0).toString(16)).slice(-2)}`).join(''));
-  return JSON.parse(json);
-}
-
-function upsertSocialSession(provider, providerId, name, email, picture) {
-  const id = providerUserId(provider, providerId);
-  let user = users.find(u => u.id === id || (u.provider === provider && u.providerId === providerId));
-
-  if (!user) {
-    const initials = (name || provider).split(' ').map(word => word[0]).join('').slice(0, 2).toUpperCase();
-    user = {
-      name: name || `${provider} User`,
-      id,
-      pw: '',
-      email: email || '',
-      provider,
-      providerId,
-      picture: picture || '',
-      initials,
-      onboarded: false,
-    };
-    users.push(user);
+async function routeAfterAuth(user) {
+  session = await buildSessionFromSupabase(user);
+  if (!session) return;
+  if (session.onboarded && session.obData) {
+    await loadDashboardData(session.id, session.obData.track || 'abroad');
+    await buildDashboard(session);
+    go('s-dashboard');
   } else {
-    user.name = name || user.name || `${provider} User`;
-    user.email = email || user.email || '';
-    user.picture = picture || user.picture || '';
-    user.provider = provider;
-    user.providerId = providerId;
-    user.initials = (user.name || provider).split(' ').map(word => word[0]).join('').slice(0, 2).toUpperCase();
+    go('s-ob1');
   }
-
-  localStorage.setItem('afp_users', JSON.stringify(users));
-  session = user;
-  localStorage.setItem('afp_sess', JSON.stringify(user));
-  return user;
 }
 
-function initGoogleAuth() {
-  if (!window.google?.accounts?.oauth2 || !SOCIAL_AUTH.googleClientId) return;
-  googleTokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: SOCIAL_AUTH.googleClientId,
-    scope: 'openid profile email',
-    callback: handleGoogleToken,
+async function initAuthListener() {
+  const sb = initSupabase();
+  if (!sb) return;
+
+  sb.auth.onAuthStateChange(async (event, authSession) => {
+    if (event === 'SIGNED_IN' && authSession?.user) {
+      await ensureProfile(authSession.user);
+      session = await buildSessionFromSupabase(authSession.user);
+    }
+    if (event === 'SIGNED_OUT') {
+      session = null;
+    }
   });
 }
 
-async function handleGoogleToken(response) {
-  if (response.error) {
-    toast('Google sign-in was cancelled or failed.');
-    return;
-  }
+async function restoreSession() {
+  const sb = getSupabase();
+  if (!sb) return false;
 
-  try {
-    const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-      headers: { Authorization: `Bearer ${response.access_token}` },
-    });
-    if (!res.ok) throw new Error('Unable to read Google profile.');
-    const profile = await res.json();
-    const user = upsertSocialSession('Google', profile.sub, profile.name || 'Google User', profile.email || '', profile.picture || '');
-    toast('Signed in with Google.');
-    user.onboarded ? (buildDashboard(user), go('s-dashboard')) : go('s-ob1');
-  } catch (error) {
-    toast('Google sign-in failed.');
-  }
-}
+  const { data: { session: authSession } } = await sb.auth.getSession();
+  if (!authSession?.user) return false;
 
-function initSocialProviders() {
-  initGoogleAuth();
+  await ensureProfile(authSession.user);
+  session = await buildSessionFromSupabase(authSession.user);
+  if (!session) return false;
+
+  if (session.onboarded && session.obData) {
+    await loadDashboardData(session.id, session.obData.track || 'abroad');
+    await buildDashboard(session);
+    go('s-dashboard');
+  } else {
+    go('s-ob1');
+  }
+  return true;
 }
 
 /* ── Login ── */
-function doLogin() {
-  const id = document.getElementById('li-id').value.trim();
-  const pw = document.getElementById('li-pw').value;
-  const user = users.find(u => u.id === id && u.pw === pw);
-  showErr('li-err', !user);
-  if (!user) return;
+async function doLogin() {
+  if (!authReady()) { providerLoginHint('Email'); return; }
 
-  session = user;
-  localStorage.setItem('afp_sess', JSON.stringify(user));
-  user.onboarded ? (buildDashboard(user), go('s-dashboard')) : go('s-ob1');
+  const email = document.getElementById('li-email').value.trim();
+  const pw    = document.getElementById('li-pw').value;
+
+  const sb = getSupabase();
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pw });
+  showErr('li-err', !!error);
+  if (error) {
+    document.getElementById('li-err').textContent = error.message || 'Email or password is incorrect.';
+    return;
+  }
+  await routeAfterAuth(data.user);
 }
 
 async function socialLogin(provider) {
   if (providerLoginHint(provider)) return;
 
   if (provider === 'Google') {
-    if (!googleTokenClient) {
-      toast('Google login is not configured yet.');
-      return;
-    }
-    googleTokenClient.requestAccessToken({ prompt: 'select_account' });
-    return;
+    const sb = getSupabase();
+    const { error } = await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin + window.location.pathname,
+      },
+    });
+    if (error) toast(error.message || 'Google sign-in failed.');
   }
 }
 
@@ -153,7 +128,9 @@ function checkPw() {
   hint.style.color     = cols[score - 1] || cols[0];
 }
 
-function doRegister() {
+async function doRegister() {
+  if (!authReady()) { providerLoginHint('Register'); return; }
+
   const name  = document.getElementById('r-name').value.trim();
   const id    = document.getElementById('r-id').value.trim();
   const pw    = document.getElementById('r-pw').value;
@@ -173,30 +150,42 @@ function doRegister() {
   chk('e-gender', !!selGender);
   if (!ok) return;
 
-  if (users.find(u => u.id === id)) {
-    showErr('e-id', true);
-    document.getElementById('e-id').textContent = 'This ID is already in use.';
+  const sb = getSupabase();
+  const { data, error } = await sb.auth.signUp({
+    email,
+    password: pw,
+    options: {
+      data: {
+        full_name: name,
+        username: id,
+        dob,
+        gender: selGender,
+      },
+    },
+  });
+
+  if (error) {
+    toast(error.message || 'Registration failed.');
     return;
   }
 
-  const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-  const user = { name, id, pw, email, dob, gender: selGender, initials, onboarded: false };
-  users.push(user);
-  localStorage.setItem('afp_users', JSON.stringify(users));
-
-  session = user;
-  localStorage.setItem('afp_sess', JSON.stringify(user));
-  toast('Account created! Welcome 🎉');
-  setTimeout(() => go('s-ob1'), 700);
+  if (data.user) {
+    await ensureProfile(data.user);
+    session = await buildSessionFromSupabase(data.user);
+    toast('Account created! Welcome 🎉');
+    setTimeout(() => go('s-ob1'), 700);
+  }
 }
 
 /* ── Logout ── */
-function doLogout() {
-  localStorage.removeItem('afp_sess');
+async function doLogout() {
+  const sb = getSupabase();
+  if (sb) await sb.auth.signOut();
   session = null;
   resetObData();
+  dashboardData = { milestones: [], tasks: [], capabilities: [], source: 'static' };
   go('s-login');
   toast('Logged out successfully.');
 }
 
-window.addEventListener('load', initSocialProviders);
+window.addEventListener('load', () => initAuthListener());

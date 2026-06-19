@@ -1,23 +1,30 @@
 
 /* ═══════════════════════════════════
    main.js — Bootstrap / initialization
-   (runs last, after all other scripts)
    ═══════════════════════════════════ */
 
-(function init() {
+(async function init() {
+  initSupabase();
+
+  if (isSupabaseConfigured()) {
+    const restored = await restoreSession();
+    if (restored) return;
+  }
+
+  // Legacy localStorage fallback (pre-Supabase sessions)
   const raw = localStorage.getItem('afp_sess');
-  if (!raw) return; // no session → stay on login screen
+  if (!raw) return;
 
   try {
     const user = JSON.parse(raw);
     session = user;
     if (user.onboarded) {
-      buildDashboard(user);
+      await buildDashboard(user);
       go('s-dashboard');
     } else {
       go('s-ob1');
     }
   } catch (e) {
-    localStorage.removeItem('afp_sess'); // corrupted session → clear
+    localStorage.removeItem('afp_sess');
   }
 })();
